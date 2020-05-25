@@ -7,7 +7,7 @@
 ## API
 ### Web Server
 API for smart farming data
-**Base URI:** *http://ec2-54-161-186-84.compute-1.amazonaws.com/*
+**Base URI:** *http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/*
 
 <br>
 
