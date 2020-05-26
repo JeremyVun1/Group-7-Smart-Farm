@@ -1,10 +1,12 @@
 <?php
+include ('database_credentials.php');
+
 class Database {
     public $conn;
 
     //Get the database connection
     public function getConnection() {
-        $this->conn = new mysqli($this->host, $this->username, $this->password, $this->dbname);
+        $this->conn = new mysqli($GLOBALS["host"], $GLOBALS["username"], $GLOBALS["password"], $GLOBALS["dbname"]);
 
 
         if($this->conn->connect_error) {
