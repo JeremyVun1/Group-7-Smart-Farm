@@ -3,7 +3,7 @@
 class Temperature {
 
     private $conn;
-    private $table_name = "temperature_readings";
+    private $table_name = "temperature";
 
 
     public $id;
@@ -15,7 +15,7 @@ class Temperature {
     }
 
     function addReading() {
-        $stmt = $this->conn->prepare("INSERT INTO " . $this->table_name . " (sensor_id, temp, datetime) VALUES (?, ?, ?)");
+        $stmt = $this->conn->prepare("INSERT INTO " . $this->table_name . " (sensor_id, temperature, datetime) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $this->id, $this->reading, $this->datetime);
 
         if($stmt->execute()) {
