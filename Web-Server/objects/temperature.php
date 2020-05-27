@@ -10,8 +10,8 @@ class Temperature {
     public $reading;
     public $datetime;
 
-    public function __construct($db) {
-        $this->conn = $db;
+    public function __construct($conn) {
+        $this->conn = $conn;
     }
 
     function addReading() {
@@ -23,6 +23,26 @@ class Temperature {
         } else {
             return false;
         }
+    }
+
+    function getReadings($start, $end) {
+        if(!empty($start) && !empty($end)) {
+            $stmt = "SELECT * FROM temperature WHERE datetime >= '$start' AND datetime <= '$end'";
+        } else {
+            //empty arguments, get all records
+            $stmt = "SELECT * FROM temperature";
+        }
+
+        $result = $this->conn->query($stmt);
+
+        $readings = array();
+
+        if($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $readings[] = $row;
+            }
+        }
+        return $readings;
     }
 }
 

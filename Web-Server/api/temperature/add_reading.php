@@ -11,9 +11,9 @@ include_once "../../config/database.php";
 include_once "../../objects/temperature.php";
 
 $database = new Database();
-$db = $database->getConnection();
+$conn = $database->getConnection();
 
-$temp = new Temperature($db);
+$temp = new Temperature($conn);
 
 $data = json_decode(file_get_contents('php://input'));
 
@@ -22,7 +22,6 @@ if (
     !empty($data->id) &&
     !empty($data->temp)
 ) {
-    
     //add the reading
     $temp->id = $data->id;
     $temp->reading = $data->temp;
@@ -34,7 +33,7 @@ if (
         http_response_code(201);
   
         // tell the user
-        echo json_encode(array("message" => "Reading was entered"));
+        echo json_encode(array("message" => "Temperature reading was entered"));
 
     } else {    // if unable to enter the reading, tell the user
                
@@ -42,7 +41,7 @@ if (
         http_response_code(503);
   
         // tell the user
-        echo json_encode(array("message" => "Unable to enter reading"));
+        echo json_encode(array("message" => "Unable to enter temperature reading"));
     }    
 } else {    // tell the user data is incomplete
     
@@ -50,7 +49,9 @@ if (
     http_response_code(400);
   
     // tell the user
-    echo json_encode(array("message" => "Unable to enter reading. Data is incomplete."));
+    echo json_encode(array("message" => "Unable to enter temperature reading. Data is incomplete."));
 }
+
+$conn->close();
 
 ?>
