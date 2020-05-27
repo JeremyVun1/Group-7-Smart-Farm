@@ -47,7 +47,7 @@ Adds a temperature reading
 <br>
 
 ### Example
-> **GET:** http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings.php?id=Temp+Sensor+A&start=2020-05-20&end=2020-05-21
+> **GET:** http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings.php?id=Temp+Sensor+A&start=2020-05-20&end=2020-05-28
 
 >**POST:** { "id" : "Temp Sensor A" , "temp" : 12.34 }
 
@@ -89,7 +89,7 @@ Adds a water level reading
 <br>
 
 ### Example
-> **GET:** http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/water/get_readings.php?id=Water+Sensor+A&start=2020-05-20&end=2020-05-21
+> **GET:** http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/water/get_readings.php?id=Water+Sensor+A&start=2020-05-20&end=2020-05-28
 
 >**POST:** { "id" : "Water Sensor A" , "water" : 50000 }
 
@@ -132,7 +132,7 @@ Adds a soil moisture reading
 <br>
 
 ### Example
-> **GET:** http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/soil/get_readings.php?id=Soil+Sensor+A&start=2020-05-20&end=2020-05-21
+> **GET:** http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/soil/get_readings.php?id=Soil+Sensor+A&start=2020-05-20&end=2020-05-28
 
 >**POST:** { "id" : "Soil Sensor A" , "moisture" : 500 }
 
