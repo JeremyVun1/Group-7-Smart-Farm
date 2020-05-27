@@ -15,10 +15,13 @@ $conn = $database->getConnection();
 
 $water = new Water($conn);
 
-$start = $_GET["sdt"];
-$end = $_GET["edt"];
+$id = !empty($_GET["id"])?$_GET["id"]:"all";
 
-$readings = $water->getReadings($start, $end);
+date_default_timezone_set('Australia/Melbourne');
+$start = !empty($_GET["start"])?$_GET["start"]:date("Y-m-d H:i:s",mktime(0,0,0,5,1,2020));  //Default to implementation date. There will be no records before this date
+$end = !empty($_GET["end"])?$_GET["end"]:date("Y-m-d H:i:s");   //Default to now.
+
+$readings = $water->getReadings($id, $start, $end);
 
 if(!empty($readings)) {
     // set response code - 200 OK

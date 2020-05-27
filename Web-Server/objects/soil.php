@@ -25,12 +25,13 @@ class Soil {
         }
     }
 
-    function getReadings($start, $end) {
-        if(!empty($start) && !empty($end)) {
-            $stmt = "SELECT * FROM $this->table_name WHERE datetime >= '$start' AND datetime <= '$end'";
-        } else {
-            //empty arguments, get all records
-            $stmt = "SELECT * FROM $this->table_name";
+    function getReadings($id, $start, $end) {
+        $stmt = "SELECT sensor_id, moisture_level, datetime FROM $this->table_name";
+        $stmt .= " WHERE datetime >= '$start' AND datetime <= '$end'";
+
+        //If user defines an id, search only for that
+        if($id != "all") {
+            $stmt .= " AND sensor_id = '$id'";
         }
 
         $result = $this->conn->query($stmt);

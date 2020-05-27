@@ -11,6 +11,7 @@ API for smart farming data
 
 <br>
 
+---
 ## Temperature
 > /api/temperature
 
@@ -22,32 +23,38 @@ API for smart farming data
 <br>
 
 ### GET
-Returns a list of temperatures within the given range
-| Params | 				|
-|--------|--------------|
-| start  | {start date} |
-| end    |  {end date}  |
+Returns a json list of temperatures within the given range
+> /get_readings.php
+
+<br>**Params**
+
+| Key    | Value        | Optional  | Format                | Default            |
+|--------|--------------|:---------:|-----------------------|--------------------|
+| id     | {sensor id}  | Yes       | String                | all                |
+| start  | {start date} | Yes       | YYYY-MM-DD hh:mm:ss   | 2020-05-01 00:00:00|
+| end    | {end date}   | Yes       | YYYY-MM-DD hh:mm:ss   | now                |
 
 
 <br>
  
 ### POST
 Adds a temperature reading
->Content-type: application/json
+>/add_reading.php
+
+>Content-type: application/json <br>
 > { "id" : "sensor id" , "reading" : "sensor reading" }
 
 <br>
 
 ### Example
-> **GET:** http://aws/api/temperature?start=2020-05-20&end=2020-05-21
+> **GET:** http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/temperature?id=Temp+Sensor+A&start=2020-05-20&end=2020-05-21
 
-
+>**POST:** { "id" : "Temp Sensor A" , "temp" : 12.34 }
 
 <br><br>
 
+---
 ## Water Level
-
-
 > /api/water
 
 <br>
@@ -59,32 +66,38 @@ Adds a temperature reading
 
 ### GET
 Returns a list of water levels from water tank within the given range
-| Params | 				 |
-|--------|---------------|
-| id     | { tank id }   |
-| start  | { start date }|
-| end    | { end date }  |
+>/get_readings.php
+
+<br>**Params**
+
+| Key    | Value        | Optional  | Format                | Default            |
+|--------|--------------|:---------:|-----------------------|--------------------|
+| id     | {sensor id}  | Yes       | String                | all                |
+| start  | {start date} | Yes       | YYYY-MM-DD hh:mm:ss   | 2020-05-01 00:00:00|
+| end    | {end date}   | Yes       | YYYY-MM-DD hh:mm:ss   | now                |
 
 
 <br>
  
 ### POST
 Adds a water level reading
+>/add_reading.php
+
 >Content-type: application/json
-> { "id" : "sensor id" , "reading" : "sensor reading" }
+> { "id" : "sensor id" , "water" : "sensor reading" }
 
 <br>
 
 ### Example
-> **GET:** http://aws/api/water?start=2020-05-20&end=2020-05-21
+> **GET:** http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/water?id=Water+Sensor+A&start=2020-05-20&end=2020-05-21
 
+>**POST:** { "id" : "Water Sensor A" , "water" : 50000 }
 
 
 <br><br>
 
+---
 ## Soil Moisture
-
-
 > /api/soil
 
 <br>
@@ -96,24 +109,32 @@ Adds a water level reading
 
 ### GET
 Returns a list of soil moisture levels from a sensor within the given range
-| Params | 				  |
-|--------|----------------|
-| id     | { device id }  |
-| start  | { start date } |
-| end    | { end date }   |
+?/get_readings.php
+
+<br>**Params**
+
+| Key    | Value        | Optional  | Format                | Default            |
+|--------|--------------|:---------:|-----------------------|--------------------|
+| id     | {sensor id}  | Yes       | String                | all                |
+| start  | {start date} | Yes       | YYYY-MM-DD hh:mm:ss   | 2020-05-01 00:00:00|
+| end    | {end date}   | Yes       | YYYY-MM-DD hh:mm:ss   | now                |
 
 
 <br>
  
 ### POST
 Adds a soil moisture reading
+>/add_reading.php
+
 >Content-type: application/json
 > { "id" : "sensor id" , "reading" : "sensor reading" }
 
 <br>
 
 ### Example
-> **GET:** http://aws/api/soil?start=2020-05-20&end=2020-05-21
+> **GET:** http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/soil?id=Soil+Sensor+A&start=2020-05-20&end=2020-05-21
+
+>**POST:** { "id" : "Soil Sensor A" , "moisture" : 500 }
 
 
 
