@@ -15,7 +15,7 @@ class Temperature {
     }
 
     function addReading() {
-        $stmt = $this->conn->prepare("INSERT INTO " . $this->table_name . " (sensor_id, temperature, datetime) VALUES (?, ?, ?)");
+        $stmt = $this->conn->prepare("INSERT INTO $this->table_name (sensor_id, temperature, datetime) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $this->id, $this->reading, $this->datetime);
 
         if($stmt->execute()) {
@@ -27,10 +27,10 @@ class Temperature {
 
     function getReadings($start, $end) {
         if(!empty($start) && !empty($end)) {
-            $stmt = "SELECT * FROM temperature WHERE datetime >= '$start' AND datetime <= '$end'";
+            $stmt = "SELECT * FROM $this->table_name WHERE datetime >= '$start' AND datetime <= '$end'";
         } else {
             //empty arguments, get all records
-            $stmt = "SELECT * FROM temperature";
+            $stmt = "SELECT * FROM $this->table_name";
         }
 
         $result = $this->conn->query($stmt);

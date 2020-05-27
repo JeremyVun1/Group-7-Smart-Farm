@@ -29,7 +29,7 @@ if(!empty($readings)) {
 
 } else {    // if unable to retrieve the reading, tell the user
            
-    // set response code - 503 Internal Service Error
+    // set response code - 500 Internal Service Error
     http_response_code(500);
 
     // tell the user
