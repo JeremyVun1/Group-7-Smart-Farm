@@ -13,12 +13,12 @@ include_once "../../objects/water.php";
 $database = new Database();
 $conn = $database->getConnection();
 
-$temp = new Water($conn);
+$water = new Water($conn);
 
 $start = $_GET["sdt"];
 $end = $_GET["edt"];
 
-$readings = $temp->getReadings($start, $end);
+$readings = $water->getReadings($start, $end);
 
 if(!empty($readings)) {
     // set response code - 200 OK
@@ -33,7 +33,7 @@ if(!empty($readings)) {
     http_response_code(500);
 
     // tell the user
-    echo json_encode(array("message" => "Unable to retrieve temperature readings"));
+    echo json_encode(array("message" => "Unable to retrieve water level readings"));
 }
 
 $conn->close();

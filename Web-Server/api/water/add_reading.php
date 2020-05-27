@@ -13,22 +13,22 @@ include_once "../../objects/water.php";
 $database = new Database();
 $conn = $database->getConnection();
 
-$temp = new Water($conn);
+$water = new Water($conn);
 
 $data = json_decode(file_get_contents('php://input'));
 
 if (
     //Make sure we have values!
     !empty($data->id) &&
-    !empty($data->temp)
+    !empty($data->water)
 ) {
     //add the reading
-    $temp->id = $data->id;
-    $temp->reading = $data->temp;
+    $water->id = $data->id;
+    $water->reading = $data->water;
     date_default_timezone_set('Australia/Melbourne');
-    $temp->datetime = date("Y-m-d H:i:s");
+    $water->datetime = date("Y-m-d H:i:s");
 
-    if($temp->addReading()) {
+    if($water->addReading()) {
         // set response code - 201 created
         http_response_code(201);
   
