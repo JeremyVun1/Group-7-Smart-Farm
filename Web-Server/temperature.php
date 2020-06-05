@@ -44,6 +44,7 @@ foreach($allReadings as $reading) {
 <!DOCTYPE HTML>
 <html>
 <head>
+<link rel="stylesheet" href="stylesheet.css">
 <script>
 window.onload = function () {
 

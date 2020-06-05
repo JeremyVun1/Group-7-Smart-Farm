@@ -26,8 +26,12 @@ $temperatures = array(
     array("label" => "20-24.99°C", "y" => 0),
     array("label" => "25-29.99°C", "y" => 0),
     array("label" => "30-34.99°C", "y" => 0),
-    array("label" => "35°C+", "y" => 0)
+    array("label" => "35-39.99°C", "y" => 0),
+    array("label" => "40-44.99°C", "y" => 0),
+    array("label" => "45-49.99°C", "y" => 0),
+    array("label" => "50°C+", "y" => 0)
 );
+//print_r($readings);
 
 foreach($readings as $r) {
     $temp = $r->temperature;
@@ -47,7 +51,7 @@ foreach($readings as $r) {
         case ($temp < 20):
             $temperatures[4]["y"] += 1;
         break;
-        case($temp < 25):
+        case ($temp < 25):
             $temperatures[5]["y"] += 1;
         break;
         case ($temp < 30):
@@ -56,8 +60,17 @@ foreach($readings as $r) {
         case ($temp < 35):
             $temperatures[7]["y"] += 1;
         break;
-        case ($temp >= 35):
+        case ($temp < 40):
             $temperatures[8]["y"] += 1;
+        break;
+        case ($temp < 45):
+            $temperatures[9]["y"] += 1;
+        break;
+        case ($temp < 50):
+            $temperatures[10]["y"] += 1;
+        break;
+        case ($temp >= 50):
+            $temperatures[11]["y"] += 1;
         break;
     }
 }
@@ -81,7 +94,10 @@ $soilMoistures = array(
     array("label" => "20-24.99°C", "y" => 0),
     array("label" => "25-29.99°C", "y" => 0),
     array("label" => "30-34.99°C", "y" => 0),
-    array("label" => "35°C+", "y" => 0)
+    array("label" => "35-39.99°C", "y" => 0),
+    array("label" => "40-44.99°C", "y" => 0),
+    array("label" => "45-49.99°C", "y" => 0),
+    array("label" => "50°C+", "y" => 0)
 );
 //print_r($readings);
 
@@ -103,7 +119,7 @@ foreach($readings as $r) {
         case ($moisture < 20):
             $soilMoistures[4]["y"] += 1;
         break;
-        case($moisture < 25):
+        case ($moisture < 25):
             $soilMoistures[5]["y"] += 1;
         break;
         case ($moisture < 30):
@@ -112,8 +128,17 @@ foreach($readings as $r) {
         case ($moisture < 35):
             $soilMoistures[7]["y"] += 1;
         break;
-        case ($moisture >= 35):
+        case ($moisture < 40):
             $soilMoistures[8]["y"] += 1;
+        break;
+        case ($moisture < 45):
+            $soilMoistures[9]["y"] += 1;
+        break;
+        case ($moisture < 50):
+            $soilMoistures[10]["y"] += 1;
+        break;
+        case ($moisture >= 50):
+            $soilMoistures[11]["y"] += 1;
         break;
     }
 }
@@ -222,14 +247,13 @@ foreach($readings as $r) {
             },
             data: [{
                 type: "doughnut",
-                indexLabel: "{y}",
-                showInLegend: true,
+                indexLabel: "{label} : {y}",
+                showInLegend: false,
                 legendText: "{label} : {y}",
                 dataPoints: <?php echo json_encode($temperatures, JSON_NUMERIC_CHECK); ?>
             }] 
         });
 
-        tempChart.render();
 
 
         var moistureChart = new CanvasJS.Chart("soilMoistureContainer", {
@@ -240,14 +264,13 @@ foreach($readings as $r) {
             },
             data: [{
                 type: "doughnut",
-                indexLabel: "{y}",
-                showInLegend: true,
+                indexLabel: "{label} : {y}",
+                showInLegend: false,
                 legendText: "{label} : {y}",
                 dataPoints: <?php echo json_encode($soilMoistures, JSON_NUMERIC_CHECK); ?>
             }] 
         });
 
-        moistureChart.render();
 
 
         var waterChart = new CanvasJS.Chart("waterLevelContainer", {
@@ -258,13 +281,15 @@ foreach($readings as $r) {
             },
             data: [{
                 type: "doughnut",
-                indexLabel: "{y}",
-                showInLegend: true,
+                indexLabel: "{label} : {y}",
+                showInLegend: false,
                 legendText: "{label} : {y}",
                 dataPoints: <?php echo json_encode($waterLevels, JSON_NUMERIC_CHECK); ?>
             }] 
         });
 
+        tempChart.render();
+        moistureChart.render();
         waterChart.render();
     }
 </script>
@@ -279,16 +304,30 @@ foreach($readings as $r) {
     </div>
     <br>
     <div class="row">
-        <div class="col-md-4">
-            <span id="temperatureContainer"></span>
+        <div class="col-lg-4">
+            <div id="temperatureContainer" style="height: 300px; width: 100%; display: inline-block;"></div>
+            <a href="temperature.php" id="text">Click for more</span>
         </div>
-        <div class="col-md-4">
-            <span id="soilMoistureContainer"></span>
+        <div class="col-lg-4">
+            <div id="soilMoistureContainer" style="height: 300px; width: 100%; display: inline-block;"></div>
+            <a href="soil.php" id="text">Click for more</span>        
         </div>
-        <div class="col-md-4">
-            <span id="waterLevelContainer"></span>
+        <div class="col-lg-4">
+            <div id="waterLevelContainer" style="height: 300px; width: 100%; display: inline-block;"></div>
+            <a href="water.php" id="text">Click for more</span>
         </div>
     </div>
+    <!-- <div class="row">
+        <div class="col-md-4 text-center">
+            <a href="temperature.php" id="text">Click for more</span>
+        </div>
+        <div class="col-md-4 text-center">
+            <a href="soil.php" id="text">Click for more</span>        
+        </div>
+        <div class="col-md-4 text-center">
+            <a href="water.php" id="text">Click for more</span>
+        </div>
+    </div> -->
 </div>
 </body>
 </html>
