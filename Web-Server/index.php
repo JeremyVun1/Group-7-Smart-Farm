@@ -208,13 +208,17 @@ foreach($readings as $r) {
 <!DOCTYPE HTML>
 <html>
 <head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="stylesheet.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<script src="lib/canvasjs-2.3.2/canvasjs.min.js"></script>
 <script>
     window.onload = function () {
         var tempChart = new CanvasJS.Chart("temperatureContainer", {
             theme: "dark2",
             animationEnabled: true,
             title:{
-                text: "Recent Temperature Readings",//concat("Temperatures over "<?php echo $timeRange; ?>),
+                text: "Recent Temperature Readings",
             },
             data: [{
                 type: "doughnut",
@@ -227,12 +231,12 @@ foreach($readings as $r) {
 
         tempChart.render();
 
-        
+
         var moistureChart = new CanvasJS.Chart("soilMoistureContainer", {
             theme: "dark2",
             animationEnabled: true,
             title:{
-                text: "Recent Soil Moisture Readings",//concat("Temperatures over "<?php echo $timeRange; ?>),
+                text: "Recent Soil Moisture Readings",
             },
             data: [{
                 type: "doughnut",
@@ -250,7 +254,7 @@ foreach($readings as $r) {
             theme: "dark2",
             animationEnabled: true,
             title:{
-                text: "Recent Water Level Readings",//concat("Temperatures over "<?php echo $timeRange; ?>),
+                text: "Recent Water Level Readings",
             },
             data: [{
                 type: "doughnut",
@@ -263,17 +267,28 @@ foreach($readings as $r) {
 
         waterChart.render();
     }
-
-
-    
 </script>
+   
 </head>
 <body>
-<h1>Smart Farming Control Center</h1>
-<br><br>
-<div id="temperatureContainer" style="height: 370px; width: 30%;"></div>
-<div id="soilMoistureContainer" style="height: 370px; width: 30%;"></div>
-<div id="waterLevelContainer" style="height: 370px; width: 30%;"></div>
-<script src="lib/canvasjs-2.3.2/canvasjs.min.js"></script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1>Smart Farming Control Center</h1>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-4">
+            <span id="temperatureContainer"></span>
+        </div>
+        <div class="col-md-4">
+            <span id="soilMoistureContainer"></span>
+        </div>
+        <div class="col-md-4">
+            <span id="waterLevelContainer"></span>
+        </div>
+    </div>
+</div>
 </body>
 </html>
