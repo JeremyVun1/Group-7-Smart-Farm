@@ -2,7 +2,7 @@
 
 //Get ALL the data
 $handle = curl_init();
-$getAllUrl="http://localhost/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings";
+$getAllUrl="http://localhost/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings.php?";
 curl_setopt($handle, CURLOPT_URL, $getAllUrl);
 curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 $result = curl_exec($handle);

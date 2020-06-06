@@ -5,18 +5,17 @@ $timeRange = "30 days";
 $params = array(
     "start" => date('Y-m-d H:i:s', strtotime("-".$timeRange))
 );
-$params = http_build_query($params);
+$params = http_build_query($params,PHP_QUERY_RFC3986);
 
 //Get temperatures
 $handle = curl_init();
-$getTempsURL="http://localhost/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings?".$params;
+$getTempsURL="http://localhost/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings.php?".$params;
 curl_setopt($handle, CURLOPT_URL, $getTempsURL);
 curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 $result = curl_exec($handle);
 curl_close($handle);
 
 $readings = json_decode($result);
-//$temperatures = formatDisplayData($readings, "temperature");
 $temperatures = array(
     array("label" => "-0°C", "y" => 0),
     array("label" => "0-4.99°C", "y" => 0),
@@ -78,7 +77,7 @@ foreach($readings as $r) {
 
 //Get soil moistures
 $handle = curl_init();
-$getTempsURL="http://localhost/Group-7-Smart-Farm/Web-Server/api/soil/get_readings?".$params;
+$getTempsURL="http://localhost/Group-7-Smart-Farm/Web-Server/api/soil/get_readings.php?".$params;
 curl_setopt($handle, CURLOPT_URL, $getTempsURL);
 curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 $result = curl_exec($handle);
@@ -86,59 +85,31 @@ curl_close($handle);
 
 $readings = json_decode($result);
 $soilMoistures = array(
-    array("label" => "-0°C", "y" => 0),
-    array("label" => "0-4.99°C", "y" => 0),
-    array("label" => "5-9.99°C", "y" => 0),
-    array("label" => "10-14.99°C", "y" => 0),
-    array("label" => "15-19.99°C", "y" => 0),
-    array("label" => "20-24.99°C", "y" => 0),
-    array("label" => "25-29.99°C", "y" => 0),
-    array("label" => "30-34.99°C", "y" => 0),
-    array("label" => "35-39.99°C", "y" => 0),
-    array("label" => "40-44.99°C", "y" => 0),
-    array("label" => "45-49.99°C", "y" => 0),
-    array("label" => "50°C+", "y" => 0)
+    array("label" => "0 - 20%", "y" => 0),
+    array("label" => "20 - 39%", "y" => 0),
+    array("label" => "40 - 59%", "y" => 0),
+    array("label" => "60 - 79%", "y" => 0),
+    array("label" => "80 - 100%", "y" => 0)
 );
 //print_r($readings);
 
 foreach($readings as $r) {
     $moisture = $r->moisture_level;
     switch($moisture) {
-        case ($moisture < 0):
+        case ($moisture < 500):
             $soilMoistures[0]["y"] += 1;
         break;
-        case ($moisture < 5):
+        case ($moisture < 650):
             $soilMoistures[1]["y"] += 1;
         break;
-        case ($moisture < 10):
+        case ($moisture < 800):
             $soilMoistures[2]["y"] += 1;
         break;
-        case ($moisture < 15):
+        case ($moisture < 950):
             $soilMoistures[3]["y"] += 1;
         break;
-        case ($moisture < 20):
+        case ($moisture >= 950):
             $soilMoistures[4]["y"] += 1;
-        break;
-        case ($moisture < 25):
-            $soilMoistures[5]["y"] += 1;
-        break;
-        case ($moisture < 30):
-            $soilMoistures[6]["y"] += 1;
-        break;
-        case ($moisture < 35):
-            $soilMoistures[7]["y"] += 1;
-        break;
-        case ($moisture < 40):
-            $soilMoistures[8]["y"] += 1;
-        break;
-        case ($moisture < 45):
-            $soilMoistures[9]["y"] += 1;
-        break;
-        case ($moisture < 50):
-            $soilMoistures[10]["y"] += 1;
-        break;
-        case ($moisture >= 50):
-            $soilMoistures[11]["y"] += 1;
         break;
     }
 }
@@ -147,7 +118,7 @@ foreach($readings as $r) {
 
 //Get water levels
 $handle = curl_init();
-$getTempsURL="http://localhost/Group-7-Smart-Farm/Web-Server/api/water/get_readings?".$params;
+$getTempsURL="http://localhost/Group-7-Smart-Farm/Web-Server/api/water/get_readings.php?".$params;
 curl_setopt($handle, CURLOPT_URL, $getTempsURL);
 curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 $result = curl_exec($handle);
@@ -155,15 +126,11 @@ curl_close($handle);
 
 $readings = json_decode($result);
 $waterLevels = array(
-    array("label" => "-0°C", "y" => 0),
-    array("label" => "0-4.99°C", "y" => 0),
-    array("label" => "5-9.99°C", "y" => 0),
-    array("label" => "10-14.99°C", "y" => 0),
-    array("label" => "15-19.99°C", "y" => 0),
-    array("label" => "20-24.99°C", "y" => 0),
-    array("label" => "25-29.99°C", "y" => 0),
-    array("label" => "30-34.99°C", "y" => 0),
-    array("label" => "35°C+", "y" => 0)
+    array("label" => "0 - 20%", "y" => 0),
+    array("label" => "20 - 39%", "y" => 0),
+    array("label" => "40 - 59%", "y" => 0),
+    array("label" => "60 - 79%", "y" => 0),
+    array("label" => "80 - 100%", "y" => 0)
 );
 
 foreach($readings as $r) {
@@ -199,35 +166,6 @@ foreach($readings as $r) {
     }
 }
 
-// function formatDisplayData($data, $datatype) {
-//     $result = array();
-//     foreach($data as $d) {
-//         $id = $d->sensor_id;
-//         $dataPoints = [
-//             'label' => $d->datetime,
-//             'y' => $d->$datatype
-//         ];
-//         if(strpos(json_encode($result), $id) == 0) {   //We have a new sensor
-//             array_push($result, 
-//             [
-//                 'type' => "doughnut",
-//                 'indexLabel' => " - {y}",
-//                 'showInLegend' => true,
-//                 'dataPoints' => [$dataPoints]
-//             ]);
-//         } else {
-//             // Key alread exists, add the reading to that keys dataset
-//             foreach($result as &$r) {
-//                 if($r['name'] == $id) {
-//                     array_push($r['dataPoints'],$dataPoints);
-//                 }
-//             }
-//         }
-//     }
-//     return $result;
-// }
-
-
 ?>
 
 <!DOCTYPE HTML>
@@ -246,7 +184,7 @@ foreach($readings as $r) {
                 text: "Recent Temperature Readings",
             },
             data: [{
-                type: "doughnut",
+                type: "column",
                 indexLabel: "{label} : {y}",
                 showInLegend: false,
                 legendText: "{label} : {y}",
@@ -263,7 +201,7 @@ foreach($readings as $r) {
                 text: "Recent Soil Moisture Readings",
             },
             data: [{
-                type: "doughnut",
+                type: "column",
                 indexLabel: "{label} : {y}",
                 showInLegend: false,
                 legendText: "{label} : {y}",
@@ -280,7 +218,7 @@ foreach($readings as $r) {
                 text: "Recent Water Level Readings",
             },
             data: [{
-                type: "doughnut",
+                type: "column",
                 indexLabel: "{label} : {y}",
                 showInLegend: false,
                 legendText: "{label} : {y}",
