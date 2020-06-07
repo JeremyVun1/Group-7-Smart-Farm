@@ -5,11 +5,12 @@ $timeRange = "30 days";
 $params = array(
     "start" => date('Y-m-d H:i:s', strtotime("-".$timeRange))
 );
-$params = http_build_query($params,PHP_QUERY_RFC3986);
+$params = http_build_query($params);
 
 //Get temperatures
 $handle = curl_init();
 $getTempsURL="http://localhost/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings.php?".$params;
+//echo $getTempsURL;
 curl_setopt($handle, CURLOPT_URL, $getTempsURL);
 curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 $result = curl_exec($handle);
@@ -150,18 +151,6 @@ foreach($readings as $r) {
         break;
         case ($waterLvl < 20):
             $waterLevels[4]["y"] += 1;
-        break;
-        case($waterLvl < 25):
-            $waterLevels[5]["y"] += 1;
-        break;
-        case ($waterLvl < 30):
-            $waterLevels[6]["y"] += 1;
-        break;
-        case ($waterLvl < 35):
-            $waterLevels[7]["y"] += 1;
-        break;
-        case ($waterLvl >= 35):
-            $waterLevels[8]["y"] += 1;
         break;
     }
 }
