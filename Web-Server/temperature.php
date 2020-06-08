@@ -1,5 +1,7 @@
 <?php
 
+$temperatures = array();
+
 if(isset($_POST['search'])) {
     
     $params = array();
@@ -23,7 +25,6 @@ if(isset($_POST['search'])) {
 
     $readings = json_decode($result);
 
-    $temperatures = array();
 
     foreach($readings as $reading) {
         $id = $reading->sensor_id;
@@ -50,6 +51,9 @@ if(isset($_POST['search'])) {
             }
         }
     }
+    $display = "block";
+} else {
+    $display = "none";
 }
 
 
@@ -62,44 +66,42 @@ if(isset($_POST['search'])) {
 <script src="lib/canvasjs-2.3.2/canvasjs.min.js"></script>
 <script>
 window.onload = function () {
+    var chart = new CanvasJS.Chart("chartContainer", {
+        theme:"dark2",
+        animationEnabled: true,
+        title:{
+            text: "Temperatures"
+        },
+        axisY :{
+            includeZero: false,
+            title: "Temp",
+            suffix: "°C"
+        },
+        toolTip: {
+            shared: "true"
+        },
+        legend:{
+            cursor:"pointer",
+            itemclick : toggleDataSeries
+        },
+        data: <?php echo json_encode($temperatures, JSON_NUMERIC_CHECK); ?>
+    });
+    chart.render();
 
-var chart = new CanvasJS.Chart("chartContainer", {
-	theme:"dark2",
-	animationEnabled: true,
-	title:{
-		text: "Temperatures"
-	},
-	axisY :{
-		includeZero: false,
-		title: "Temp",
-		suffix: "°C"
-	},
-	toolTip: {
-		shared: "true"
-	},
-	legend:{
-		cursor:"pointer",
-		itemclick : toggleDataSeries
-	},
-	data: <?php echo json_encode($temperatures, JSON_NUMERIC_CHECK); ?>
-});
-chart.render();
-
-function toggleDataSeries(e) {
-	if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
-		e.dataSeries.visible = false;
-	} else {
-		e.dataSeries.visible = true;
-	}
-	chart.render();
-}
-
+    function toggleDataSeries(e) {
+        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
+            e.dataSeries.visible = false;
+        } else {
+            e.dataSeries.visible = true;
+        }
+        chart.render();
+    }
 }    
 </script>
 </head>
 <body>
 
-<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+<div id="chartContainer" style="display:<?php echo $display;?>; height: 300px; width: 100%;"></div>
 
 <form method="post" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>">
     <h3>Please enter a datetime range you wish to search for:</h3>
@@ -112,7 +114,8 @@ function toggleDataSeries(e) {
     <input type="submit" name="search" value="Search">
 </form>
 
-
+<br>
+<input type="button" onclick="location.href='index.php'" value="Home"></button>
 
 </body>
 </html>
