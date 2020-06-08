@@ -44,7 +44,7 @@ if(isset($_POST['search'])) {
 
     $params = http_build_query($params);
     $handle = curl_init();
-    $getTempsUrl="http://localhost/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings.php?".$params;
+    $getTempsUrl="http://localhost/Group-7-Smart-Farm/src/Web-Server/api/temperature/get_readings.php?".$params;
     curl_setopt($handle, CURLOPT_URL, $getTempsUrl);
     curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
     $result = curl_exec($handle);
