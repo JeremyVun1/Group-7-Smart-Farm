@@ -2,8 +2,6 @@
 #include <avr/wdt.h>
 #include <avr/power.h>
 
-#include <SpritzCipher.h>
-
 #include "MoistureSensor.h"
 
 const int LOW_VOLTAGE_VALUE = 400;
@@ -12,16 +10,13 @@ const int MOISTURE_PIN = A0;
 const int SLEEP_CYCLES = 2;
 const bool USE_SERIAL = true;
 const long INTERNAL_REFERENCE_VOLTAGE = 1125300L;
-const char WAKING_MSG[10] = "waking up";
-const char BATTERY_LOW_MSG[12] = "battery low";
-const char guid[5] = "4444";
-
-const byte key[3] = { 0x00, 0x01, 0x02 };
+const char guid[5] = "1234";
 
 volatile int sleepCount = 1;
 
+volatile char readBuffer[10];
+
 MoistureSensor sensor(MOISTURE_PIN, SENSOR_MAX);
-spritz_ctx spritz;
 
 /*
  * SETUP
@@ -30,7 +25,7 @@ void setup() {
   // downclock to reduce power consumption
   noInterrupts();
   CLKPR = bit(CLKPCE);
-  CLKPR = clock_div_2;
+  CLKPR = clock_div_4;
   interrupts();
 
   // set pins to input mode to decrease power consumption
@@ -41,74 +36,31 @@ void setup() {
   Serial.begin(9600); // actual output is 2400 baud with clock_div_4
 }
 
-void encrypt(char* in, char* out) {
-  spritz_setup(&spritz, key, strlen(key));
-  spritz_crypt(&spritz, in, strlen(in), out);
-}
-
-void decrypt(char* in, char* out) {
-  spritz_setup(&spritz, key, strlen(key));
-  spritz_crypt(&spritz, in, strlen(out), out);
-}
-
 /*
  * Output methods
  */
-void serialOutput(char* data, int dataSize) {
+void serialOutput(char* data, char* topic) {
   Serial.flush();
-  char out[128] = "";
-  strcat(out, "{\"topic\": \"moisture/");
+  char out[128];
+  strcpy(out, "{\"t\":\"");
+  strcat(out, topic);
+  strcat(out, "/");
   strcat(out, guid);
-  strcat(out, "\",\"data\":\"");
-  Serial.print(out);
-
-  for (int i = 0; i < dataSize; i++) {
-    if (data[i] < 0x10)
-      Serial.write('0');
-    Serial.print(data[i]);
-  }
-
-  Serial.print("\"}");
-  Serial.println();
+  strcat(out, "\",\"p\":\"");
+  strcat(out, data);
+  strcat(out, "\"}");
+  Serial.println(out);
   Serial.flush();
 }
 
-void wifiOutput(char* data, int dataSize) {
-  Serial.println("wifi");
-}
-
-void sendData(int data) {
-  char str[5];
-  snprintf(str, 16, "%d", data);
-  //Serial.println("raw in:");
-  //Serial.println(str);
-  //Serial.flush();
-
-  char buf[30];
-  encrypt(str, buf);
-
-  /*
-  Serial.println("Encrypted:");
-  Serial.flush();
-
-  
-  */
-
-  //decrypt(buf, str);
-
-  Serial.flush();
-  if (USE_SERIAL) {
-    serialOutput(buf, strlen(str));
-  } else {
-    wifiOutput(buf, strlen(str));
-  }
-  Serial.flush();
+void sendInt(int val, char* topic) {
+  snprintf(readBuffer, 10, "%d", val);
+  serialOutput(readBuffer, topic);
 }
 
 // the interupt routine handler
 ISR (WDT_vect) {
   wdt_disable();
-  //Serial.println(WAKING_MSG);
   sleepCount++;
 }
 
@@ -120,8 +72,9 @@ int getBandGap()
    ADMUX = bit (REFS0) | bit (MUX3) | bit (MUX2) | bit (MUX1);
    delay(2);
    ADCSRA |= bit( ADSC );  // start conversion
-   while (ADCSRA & bit (ADSC))
-     { }  // wait for conversion to complete
+   
+   while (ADCSRA & bit (ADSC)) { } // wait for conversion to complete
+
    int results = ((INTERNAL_REFERENCE_VOLTAGE / ADC) + 5) / 10;
    return results;
 }
@@ -129,14 +82,11 @@ int getBandGap()
 void loop() {
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   sleep_enable();
-  sleep_bod_disable();
+  sleep_bod_disable(); // disable brownout detection
 
-  // disable ADC
+  // disable ADC when we go to sleep
   static byte prevADCSRA = ADCSRA;
   ADCSRA = 0;
-
-  //Serial.println("sleeping");
-  //Serial.flush();
 
   while (sleepCount < 4) {
     noInterrupts();
@@ -153,62 +103,15 @@ void loop() {
   }
 
   sleep_disable();
-  
-  //Serial.println("waking up");
-  sleepCount = 0;
-  ADCSRA = prevADCSRA; // restore ADC
 
+  sleepCount = 0;
+  ADCSRA = prevADCSRA; // restore ADC for sensor
+
+  // send sensor value
   int val = sensor.readValue();
-  sendData(val);
+  sendInt(val, "m");
 
-  // check for low voltage
-  //int internalVoltage = getBandGap();
-  //if (internalVoltage < LOW_VOLTAGE_VALUE) {
-    //sendData(batteryLowMsg);
-  //}
-  /*
-
-  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-  sleep_enable();
-
-  // Disable the ADC (Analog to digital converter, pins A0 [14] to A5 [19])
-  // don't need ADC while we are sleeping
-  static byte prevADCSRA = ADCSRA;
-  ADCSRA = 0;
-
-  // Sleep for several times the duration of the watch dog timer
-  while (sleepCount < SLEEP_MULTI) {
-    sleep_bod_disable();
-
-    // no interupts before we are sleeping
-    noInterrupts();
-
-    MCUSR = 0;
-    WDTCSR = bit(WDCE) | bit(WDE);
-    // 2 | 1 - 1 second
-    // 2 | 1 | 0 - 2 seconds
-    // 3 - 4 seconds
-    // 3 | 0 - 8 seconds
-    WDTCSR = bit(WDIE) | bit(WDP2) | bit(WDP1);
-    //WDTCSR = bit(WDIE) | bit(WDP3) | bit(WDP0);
-    wdt_reset();
-
-    interrupts();
-    sleep_cpu();
-  }
-
-  // lock from sleeping while we run our logic
-  sleep_disable();
-  sleepCount = 0;
-  ADCSRA = prevADCSRA; // re-enable ADC so that we can poll our analog sensors
-
-  //int val = sensor.readValue();
-  //sendData(val);
-
-  // check for low voltage
-  //int internalVoltage = getBandGap();
-  //if (internalVoltage < LOW_VOLTAGE_VALUE) {
-    //sendData(batteryLowMsg);
-  //}
-  */
+  // send internal voltage value
+  int internalVoltage = getBandGap();
+  sendInt(internalVoltage, "v");
 }
