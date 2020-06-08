@@ -60,10 +60,10 @@ Change MQTT node to point to where you set up your MQTT broker as necessary
 | temperature/<sensor_id> | Temperature data is published to the temperature topic |
 | water/<sensor_id> | Water tower level data is published to the water topic |
 
-To subscribe to the broker,
-1. CLI method for testing
-./mosquitto_sub -i
-2. Other methods - use a third party MQTT library
+To subscribe to all topics,
+moisture/#
+temperuater/#
+water/#
 ```
 
 ## Components
