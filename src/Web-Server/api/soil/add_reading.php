@@ -20,11 +20,11 @@ $data = json_decode(file_get_contents('php://input'));
 if (
     //Make sure we have values!
     !empty($data->id) &&
-    !empty($data->moisture)
+    !empty($data->reading)
 ) {
     //add the reading
     $soil->id = $data->id;
-    $soil->reading = $data->moisture;
+    $soil->reading = $data->reading;
     date_default_timezone_set('Australia/Melbourne');
     $soil->datetime = date("Y-m-d H:i:s");
 

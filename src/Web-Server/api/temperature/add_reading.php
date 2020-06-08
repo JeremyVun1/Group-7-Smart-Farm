@@ -20,11 +20,11 @@ $data = json_decode(file_get_contents('php://input'));
 if (
     //Make sure we have values!
     !empty($data->id) &&
-    !empty($data->temp)
+    !empty($data->reading)
 ) {
     //add the reading
     $temp->id = $data->id;
-    $temp->reading = $data->temp;
+    $temp->reading = $data->reading;
     date_default_timezone_set('Australia/Melbourne');
     $temp->datetime = date("Y-m-d H:i:s");
 

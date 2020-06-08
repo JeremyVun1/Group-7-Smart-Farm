@@ -1,8 +1,8 @@
 
 *.code-workspace
 
-Web-Server/.vscode/
+src/Web-Server/.vscode/
 
-Web-Server/config/database_credentials.php
+src/Web-Server/config/database_credentials.php
 
 notes.txt

@@ -20,11 +20,11 @@ $data = json_decode(file_get_contents('php://input'));
 if (
     //Make sure we have values!
     !empty($data->id) &&
-    !empty($data->water)
+    !empty($data->reading)
 ) {
     //add the reading
     $water->id = $data->id;
-    $water->reading = $data->water;
+    $water->reading = $data->reading;
     date_default_timezone_set('Australia/Melbourne');
     $water->datetime = date("Y-m-d H:i:s");
 

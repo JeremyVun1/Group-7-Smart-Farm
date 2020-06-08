@@ -78,7 +78,8 @@ pipenv run python adapter.py -h <MQTTBroker IP>
 
 ### Web Server
 API for smart farming data
-**Base URI:** *http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/*
+
+**Base URI:** *http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/*
 
 #### GET Endpoints
 - /api/soil/get_readings.php
