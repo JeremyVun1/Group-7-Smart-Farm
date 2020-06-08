@@ -114,7 +114,7 @@ Adds a temperature reading
 ### Example
 > **GET:** http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings.php?id=Temp+Sensor+A&start=2020-05-20&end=2020-05-28
 
->**POST:** { "id" : "Temp Sensor A" , "temp" : 12.34 }
+>**POST:** { "id" : "Temp Sensor A" , "reading" : 12.34 }
 
 <br><br>
 
@@ -149,14 +149,14 @@ Adds a water level reading
 >/add_reading.php
 
 >Content-type: application/json
-> { "id" : "sensor id" , "water" : "sensor reading" }
+> { "id" : "sensor id" , "reading" : "sensor reading" }
 
 <br>
 
 ### Example
 > **GET:** http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/water/get_readings.php?id=Water+Sensor+A&start=2020-05-20&end=2020-05-28
 
->**POST:** { "id" : "Water Sensor A" , "water" : 50000 }
+>**POST:** { "id" : "Water Sensor A" , "reading" : 50000 }
 
 
 <br><br>
@@ -199,7 +199,7 @@ Adds a soil moisture reading
 ### Example
 > **GET:** http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/soil/get_readings.php?id=Soil+Sensor+A&start=2020-05-20&end=2020-05-28
 
->**POST:** { "id" : "Soil Sensor A" , "moisture" : 500 }
+>**POST:** { "id" : "Soil Sensor A" , "reading" : 500 }
 
 
 
