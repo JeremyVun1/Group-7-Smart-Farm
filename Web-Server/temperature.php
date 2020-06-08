@@ -3,34 +3,29 @@
 if(isset($_POST['search'])) {
     
     $params = array();
-    $start;
-    $end;
 
-    if(isset($_POST['startDateTime'])) {
-       $start = new DateTime($_POST['startDateTime']);
-       $params += ["start" => $start->format('Y-m-d H:i:s')];
+    if(!empty($_POST['startDatetime'])) {
+       $start = new DateTime($_POST['startDatetime']);
+       $params += array("start" => $start->format('Y-m-d H:i:s'));
     } 
-    if(isset($_POST['endDateTime'])) {
-        $end = new DateTime($_POST['endDateTime']);
-        $params += ["end" => $end->format('Y-m-d H:i:s')];
-    }
-
-    
+    if(!empty($_POST['endDatetime'])) {
+        $end = new DateTime($_POST['endDatetime']);
+        $params += array("end" => $end->format('Y-m-d H:i:s'));
+    }    
 
     $params = http_build_query($params);
     $handle = curl_init();
     $getTempsUrl="http://localhost/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings.php?".$params;
-    echo $getTempsUrl;
     curl_setopt($handle, CURLOPT_URL, $getTempsUrl);
     curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
     $result = curl_exec($handle);
     curl_close($handle);
 
-    $allReadings = json_decode($result);
+    $readings = json_decode($result);
 
     $temperatures = array();
 
-    foreach($allReadings as $reading) {
+    foreach($readings as $reading) {
         $id = $reading->sensor_id;
         $temperature = $reading->temperature;
         $datetime = $reading->datetime;
