@@ -72,7 +72,7 @@ var chart = new CanvasJS.Chart("chartContainer", {
 	axisY :{
 		includeZero: false,
 		title: "Temp",
-		suffix: " degrees Celcius"
+		suffix: "°C"
 	},
 	toolTip: {
 		shared: "true"
