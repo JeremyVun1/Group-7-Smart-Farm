@@ -1,38 +1,57 @@
 <?php
 
-//Get ALL the data
-$handle = curl_init();
-$getAllUrl="http://localhost/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings.php?";
-curl_setopt($handle, CURLOPT_URL, $getAllUrl);
-curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-$result = curl_exec($handle);
-curl_close($handle);
+if(isset($_POST['search'])) {
+    
+    $params = array();
+    $start;
+    $end;
 
-$allReadings = json_decode($result);
+    if(isset($_POST['startDateTime'])) {
+       $start = new DateTime($_POST['startDateTime']);
+       $params += ["start" => $start->format('Y-m-d H:i:s')];
+    } 
+    if(isset($_POST['endDateTime'])) {
+        $end = new DateTime($_POST['endDateTime']);
+        $params += ["end" => $end->format('Y-m-d H:i:s')];
+    }
 
-$temperatures = array();
+    
 
-foreach($allReadings as $reading) {
-    $id = $reading->sensor_id;
-    $temperature = $reading->temperature;
-    $datetime = $reading->datetime;
-    $dataPoints = [
-        'label' => $reading->datetime,
-        'y' => $reading->temperature
-    ];
-    if(strpos(json_encode($temperatures), $id) == 0) {   //We have a new sensor
-        array_push($temperatures, 
-        [
-            'type' => "spline",
-            'showInLegend' => true,
-            'name' => $id,
-            'dataPoints' => [$dataPoints]
-        ]);
-    } else {
-        // Key alread exists, add the reading to that keys dataset
-        foreach($temperatures as &$temp) {
-            if($temp['name'] == $id) {
-                array_push($temp['dataPoints'],$dataPoints);
+    $params = http_build_query($params);
+    $handle = curl_init();
+    $getTempsUrl="http://localhost/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings.php?".$params;
+    echo $getTempsUrl;
+    curl_setopt($handle, CURLOPT_URL, $getTempsUrl);
+    curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+    $result = curl_exec($handle);
+    curl_close($handle);
+
+    $allReadings = json_decode($result);
+
+    $temperatures = array();
+
+    foreach($allReadings as $reading) {
+        $id = $reading->sensor_id;
+        $temperature = $reading->temperature;
+        $datetime = $reading->datetime;
+        $dataPoints = [
+            'label' => $reading->datetime,
+            'y' => $reading->temperature
+        ];
+        if(strpos(json_encode($temperatures), $id) == 0) {   //We have a new sensor
+            array_push($temperatures, 
+            [
+                'type' => "spline",
+                'showInLegend' => true,
+                'name' => $id,
+                'dataPoints' => [$dataPoints]
+            ]);
+        } else {
+            // Key alread exists, add the reading to that keys dataset
+            foreach($temperatures as &$temp) {
+                if($temp['name'] == $id) {
+                    array_push($temp['dataPoints'],$dataPoints);
+                }
             }
         }
     }
@@ -45,6 +64,7 @@ foreach($allReadings as $reading) {
 <html>
 <head>
 <link rel="stylesheet" href="stylesheet.css">
+<script src="lib/canvasjs-2.3.2/canvasjs.min.js"></script>
 <script>
 window.onload = function () {
 
@@ -83,6 +103,9 @@ function toggleDataSeries(e) {
 </script>
 </head>
 <body>
+
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
 <form method="post" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>">
     <h3>Please enter a datetime range you wish to search for:</h3>
     <br>
@@ -94,7 +117,7 @@ function toggleDataSeries(e) {
     <input type="submit" name="search" value="Search">
 </form>
 
-<div id="chartContainer" style="height: 300px; width: 100%;"></div>
-<script src="lib/canvasjs-2.3.2/canvasjs.min.js"></script>
+
+
 </body>
 </html>
