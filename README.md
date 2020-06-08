@@ -4,8 +4,15 @@
 This repository contains all the code and documentation for an IoT smart farm implementation
 
 ## How to use
-```
+### AWS Webserver
+We have already set up infrastructure for the project. Sensors -> Gateway -> MQTT Broker -> AWS
+
+Our AWS Web Server:
+*http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/*
+
+
 ### Set up Mosquitto MQTT Broker
+```
 1. from mosquitto folder, run
 ./mosquitto -c mosquitto.conf -v
 
@@ -28,13 +35,21 @@ https://nodered.org/docs/faq/node-versions
 2. Install node-red
 https://nodered.org/docs/getting-started/local
 
-3. run node-red and go to the browser url.
-Default: http://localhost:1880
+3. From admin shell run
+node-red
 
-3. Import flows.json from the "src/node-red" folder (menu button top right)
+4. Go to node-red web app and import flows.json from the "src/node-red" folder (menu button top right)
+Default node-red url: http://localhost:1880
 
-4. Connect arduino via USB Serial, and press the deploy button in node-red
-Arduino should not be sending json strings through serial, parsed into MQTT JSON structure and sent to 
+5. Double click the MQTT Send node and add an MQTT broker under "Server"
+Point it to where your Mosquitto is listening
+Under security, use a username/password:
+username: "user"
+pasword: "password"
+
+5. Connect arduino via USB Serial, and press the deploy button in node-red
+Arduino should not be sending json strings through serial, parsed into MQTT JSON structure and sent to the mosquitto server
+Change MQTT node to point to where you set up your MQTT broker as necessary
 ```
 
 ```
@@ -45,10 +60,10 @@ Arduino should not be sending json strings through serial, parsed into MQTT JSON
 | temperature/<sensor_id> | Temperature data is published to the temperature topic |
 | water/<sensor_id> | Water tower level data is published to the water topic |
 
-Use the MQTT host and To subscribe to an MQTT view,
-#### CLI
+To subscribe to the broker,
+1. CLI method for testing
 ./mosquitto_sub -i
-1. http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/
+2. Other methods - use a third party MQTT library
 ```
 
 ## Components
@@ -56,6 +71,7 @@ Use the MQTT host and To subscribe to an MQTT view,
 ## API
 ### Web Server
 API for smart farming data
+
 **Base URI:** *http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/*
 
 <br>
