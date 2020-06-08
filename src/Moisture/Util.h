@@ -16,7 +16,13 @@ double rollingAverage (double avg, double new_val, int n) {
 // rescale the value e.g. from a value between 0 - 500 to 0 - 1024
 double rescale(double val, int _currMax, int newMax) {
   double result = (val / _currMax) * newMax;
-  return constrain(result, 0, newMax);
+
+  if (result > newMax)
+    result = newMax;
+  else if (result < 0)
+    result = 0;
+
+  return result;
 }
 
 #endif

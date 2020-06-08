@@ -1,6 +1,55 @@
 # Group 7 Smart Farm
 
 ## Overview
+This repository contains all the code and documentation for an IoT smart farm implementation
+
+## How to use
+```
+### Set up Mosquitto MQTT Broker
+1. from mosquitto folder, run
+./mosquitto -c mosquitto.conf -v
+
+2. To test the broker using two other shell's
+First shell:
+./mosquitto_sub -t "topic/test" -u user -P password
+
+Second shell:
+./mosquitto_pub -t "topic/test" -m "hello world!" -u user -P password
+
+3. To configure MQTT user accounts
+./mosquitto_passwd -b "users.txt" <username> <password>
+```
+
+```
+### Set up Serial-to-MQTT gateway
+1. Install node.js
+https://nodered.org/docs/faq/node-versions
+
+2. Install node-red
+https://nodered.org/docs/getting-started/local
+
+3. run node-red and go to the browser url.
+Default: http://localhost:1880
+
+3. Import flows.json from the "src/node-red" folder (menu button top right)
+
+4. Connect arduino via USB Serial, and press the deploy button in node-red
+Arduino should not be sending json strings through serial, parsed into MQTT JSON structure and sent to 
+```
+
+```
+### Subscribe to the MQTT broker
+| MQTT Topic | Description |
+| --- | --- |
+| moisture/<sensor_id> | Moisture data is published to the moisture topic |
+| temperature/<sensor_id> | Temperature data is published to the temperature topic |
+| water/<sensor_id> | Water tower level data is published to the water topic |
+
+Use the MQTT host and To subscribe to an MQTT view,
+#### CLI
+./mosquitto_sub -i
+1. http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/
+```
 
 ## Components
 
