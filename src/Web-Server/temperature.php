@@ -58,8 +58,8 @@ if(isset($_POST['search'])) {
         $temperature = $reading->temperature;
         $datetime = $reading->datetime;
         $dataPoints = [
-            'label' => $reading->datetime,
-            'y' => $reading->temperature
+            'label' => $datetime,
+            'y' => $temperature
         ];
         //Build the line graph data
         if(strpos(json_encode($lineTemperatures), $id) == 0) {   //We have a new sensor

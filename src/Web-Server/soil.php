@@ -50,8 +50,8 @@ if(isset($_POST['search'])) {
         $moisture = $reading->moisture_level;
         $datetime = $reading->datetime;
         $dataPoints = [
-            'label' => $reading->datetime,
-            'y' => $reading->moisture_level
+            'label' => $datetime,
+            'y' => $moisture
         ];
 
         //Build the line graph data

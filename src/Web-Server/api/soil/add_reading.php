@@ -20,7 +20,7 @@ $data = json_decode(file_get_contents('php://input'));
 if (
     //Make sure we have values!
     !empty($data->id) &&
-    !empty($data->reading)
+    (!empty($data->reading) || $data->reading == "0")
 ) {
     //add the reading
     $soil->id = $data->id;
