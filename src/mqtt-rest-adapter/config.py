@@ -8,21 +8,41 @@ def get_config():
     return config
 
 
+def get_topics(config):
+    return config["TOPIC"]["TOPICS"].split(",")
+
 def build_api_map(config):
     result = {}
 
     api_config = config["API"]
-    topics_config = config["TOPIC"]
-
     base_uri = api_config["BASE_URI"]
 
-    topics = topics_config["TOPICS"].split(",")
+    topics = get_topics(config)
     for topic in topics:
         topic_name = f"{topic}_TOPIC"
         api_name = f"{topic}_API"
         api = f"{base_uri}{api_config[api_name]}"
 
-        result[topics_config[topic_name]] = api
+        result[config["TOPIC"][topic_name]] = api
+
+    return result
+
+
+def build_handler_map(config):
+    result = {}
+
+    topics = get_topics(config)
+    handler_config = config["TOPIC_HANDLING"]
+    rest_topics = handler_config["REST"].split(",")
+    actuator_topics = handler_config["ACTUATOR"].split(",")
+
+    for topic in topics:
+        topic_name = config["TOPIC"][f"{topic}_TOPIC"]
+
+        if topic in rest_topics:
+            result[topic_name] = "rest"
+        elif topic in actuator_topics:
+            result[topic_name] = "actuator"
 
     return result
 
@@ -43,6 +63,7 @@ def parse_args(config):
 def init():
     config = get_config()
     topic_api = build_api_map(config)
+    handler_map = build_handler_map(config)
     args = parse_args(config)
 
-    return topic_api, args
+    return topic_api, handler_map, args

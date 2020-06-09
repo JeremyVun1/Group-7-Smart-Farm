@@ -6,6 +6,7 @@ from config import init, get_config
 from util import *
 
 topic_api = {}
+handler_map = {}
 config = get_config()
 
 def on_connect(client, userdata, flags, rc):
@@ -21,9 +22,8 @@ def on_connect(client, userdata, flags, rc):
         print(f"subscribed to {subscribe_name}")
 
 
-def on_message(client, userdata, msg):
-    topic, id, val = parse_message(msg)
-
+# send the  MQTT message to the REST API
+def send_to_rest_handler(topic, id, val):
     api = topic_api[topic]
     json_string = f"\"id\":\"{id}\",\"reading\":{val}"
     json_string = "{" + json_string + "}"
@@ -33,10 +33,32 @@ def on_message(client, userdata, msg):
     print(response.text)
 
 
+# send the MQTT message to the broker topic
+def send_to_actuator_handler(client, topic, id, val):
+    val = bool(val)
+    val = int(val)
+    client.publish(topic, payload=val)
+    print(f"PUBLISH {topic}/{id}: {val}")
+    # for loopback to an api testing
+    # send_to_rest_handler(topic, id, val)
+
+
+def on_message(client, userdata, msg):
+    topic, id, val = parse_message(msg)
+
+    if handler_map[topic] == "rest":
+        send_to_rest_handler(topic, id, val)
+    elif handler_map[topic] == "actuator":
+        send_to_actuator_handler(client, topic, id, val)
+    else:
+        print("error finding handler")
+
+
 def main():
     global topic_api
+    global handler_map
 
-    topic_api, args = init()
+    topic_api, handler_map, args = init()
 
     client = mqtt.Client()
     client.on_connect = on_connect

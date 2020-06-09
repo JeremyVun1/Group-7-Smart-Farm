@@ -77,6 +77,7 @@ pipenv run python adapter.py -h <MQTTBroker IP>
 | t/<sensor_id> | Temperature data is published to this topic | int value |
 | w/<sensor_id> | Water tower level data is published to this topic | int value |
 | v/<sensor_id> | Diagnostic internal voltage level for monitoring battery level is published to this topic | int value |
+| p/<sensor_id> | Turn a water pump actuator on or off | bool val |
 
 ### Web Server
 API for smart farming data
