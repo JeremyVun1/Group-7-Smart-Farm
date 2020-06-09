@@ -4,9 +4,9 @@
 
 #include "MoistureSensor.h"
 
-const int SENSOR_MAX = 760;
 const int MOISTURE_PIN = A0;
 
+const int SENSOR_MAX = 760;
 const int SLEEP_CYCLES = 2;
 const bool USE_SERIAL = true;
 const long INTERNAL_REFERENCE_VOLTAGE = 1125300L;
