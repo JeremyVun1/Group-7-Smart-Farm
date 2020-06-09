@@ -8,6 +8,8 @@ An existing example project with infrastructure has been set up.
 View the web server at:
 *http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/*
 
+Our MQTT broker is at: 121.200.24.207:1883
+
 ## How to set up your own IoT Smartfarm
 ### Set up Arduino sensors
 ```
