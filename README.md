@@ -6,7 +6,7 @@ This repository contains all the code and documentation for an IoT smart farm im
 ## Example
 An existing example project with infrastructure has been set up.
 View the web server at:
-*http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/*
+*http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/*
 
 ## How to set up your own IoT Smartfarm
 ### Set up Arduino sensors
@@ -88,7 +88,7 @@ API for smart farming data
 - /api/voltage/get_readings.php
 
 Example
-http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/Web-Server/api/temperature/get_readings.php?id=Temp+Sensor+A&start=2020-05-20&end=2020-05-28
+http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/api/temperature/get_readings.php?id=Temp+Sensor+A&start=2020-05-20&end=2020-05-28
 
 PARAMS
 
@@ -107,3 +107,6 @@ PARAMS
 | Content-type | Data |
 | --- | --- |
 | application/json | {"id": "sensor_id", "reading": "sensor_reading" | 
+
+Example
+http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/api/temperature/add_reading.php
