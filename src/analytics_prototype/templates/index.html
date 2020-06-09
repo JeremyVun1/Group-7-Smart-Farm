@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block canvasjs %}
+<script src="{{ url_for('static', filename='canvasjs.min.js') }}"></script>
+{% endblock canvasjs %}
+
+{% block content %}
+<div class="container bg-light">
+    <h1>header</h1>
+    <div id="chartContainer" class="container" style="height: 370px; width: 100%;"></div>
+    
+    <div class="container">
+        {% for s in series %}
+        <div class="row border shadow m-2 p-2">
+            <p>name: {{ s.name }}</p>
+            <p>mean: {{ s.mean }}</p>
+            <p>std_dev: {{ s.std_dev }}</p>
+            <p>variance: {{ s.variance }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        window.onload = function () {
+            var chart = new CanvasJS.Chart("chartContainer", {
+                theme: "light1",
+                animationEnabled: true,
+                title:{
+                    text: "my chart"
+                },
+                data:  [
+                    {% for s in series %}
+                        {
+                            name: "{{ s.name }}",
+                            type: "{{ s.type }}",
+                            dataPoints: [
+                                {% for d in s.datapoints %}
+                                { label: "{{ d.label }}", x: {{ d.x }}, y: {{ d.y }} },
+                                {% endfor %}
+                            ]
+                        },
+                    {% endfor %}
+                ]
+            });
+            chart.render();
+        }
+    </script>
+</div>
+{% endblock content %}

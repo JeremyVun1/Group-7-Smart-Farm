@@ -91,15 +91,14 @@ API for smart farming data
 - /api/voltage/get_readings.php
 
 Example
-http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/api/temperature/get_readings.php?id=Temp+Sensor+A&start=2020-05-20&end=2020-05-28
+http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/api/temperature/get_readings.php?id=Temp+Sensor+A&start=2020-05-20&end=2020-06-10
 
 PARAMS
-
-| Key    | Value        | Optional  | Format                | Default            |
-|--------|--------------|:---------:|-----------------------|--------------------|
-| id     | {sensor id}  | Yes       | String                | all                |
-| start  | {start date} | Yes       | YYYY-MM-DD hh:mm:ss   | 2020-05-01 00:00:00|
-| end    | {end date}   | Yes       | YYYY-MM-DD hh:mm:ss   | now                |
+| Key    | Value        | Optional  | Format                | Default            | Notes |
+|--------|--------------|:---------:|-----------------------|--------------------| --- |
+| id     | {sensor id}  | Yes       | String                | all                | optional |
+| start  | {start date} | Yes       | YYYY-MM-DD hh:mm:ss   | 2020-05-01 00:00:00| |
+| end    | {end date}   | Yes       | YYYY-MM-DD hh:mm:ss   | now                | optional |
 
 #### POST Endpoints
 - /api/soil/add_reading.php

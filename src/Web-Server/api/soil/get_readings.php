@@ -15,12 +15,14 @@ $conn = $database->getConnection();
 
 $soil = new Soil($conn);
 
+// get url params
 $id = !empty($_GET["id"])?$_GET["id"]:"all";
 
 date_default_timezone_set('Australia/Melbourne');
 $start = !empty($_GET["start"])?$_GET["start"]:date("Y-m-d H:i:s",mktime(0,0,0,5,1,2020));  //Default to implementation date. There will be no records before this date
 $end = !empty($_GET["end"])?$_GET["end"]:date("Y-m-d H:i:s");   //Default to now.
 
+// fetch data readings
 $readings = $soil->getReadings($id, $start, $end);
 
 if(!empty($readings)) {
