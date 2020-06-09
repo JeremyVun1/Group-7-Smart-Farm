@@ -2,26 +2,24 @@
 #include <avr/wdt.h>
 #include <avr/power.h>
 
-#include "MoistureSensor.h"
+#include "WaterLevelSensor.h"
 
-const int LOW_VOLTAGE_VALUE = 400;
-const int SENSOR_MAX = 760;
-const int MOISTURE_PIN = A0;
+#define TRIG_PIN 7
+#define ECHO_PIN 6
+#define TOWER_SIZE 500 //500 cm
+
 const int SLEEP_CYCLES = 2;
 const bool USE_SERIAL = true;
 const long INTERNAL_REFERENCE_VOLTAGE = 1125300L;
-const char guid[5] = "1234";
+const int LOW_VOLTAGE_VALUE = 400;
+const char guid[10] = "water_a";
 
 volatile int sleepCount = 1;
-
 volatile char readBuffer[10];
 
-MoistureSensor sensor(MOISTURE_PIN, SENSOR_MAX);
+WaterLevelSensor sensor(TRIG_PIN, ECHO_PIN, TOWER_SIZE);
 
-/*
- * SETUP
- */
-void setup() {
+void setup () {
   // downclock to reduce power consumption
   noInterrupts();
   CLKPR = bit(CLKPCE);
@@ -32,12 +30,14 @@ void setup() {
   for (int i=2; i<13; i++) {
     pinMode(i, INPUT);
   }
-
-  Serial.begin(9600); // actual output is 2400 baud with clock_div_4
+  
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  Serial.begin (9600);
 }
 
 /*
- * Output methods
+ * OUTPUT JSON TO SERIAL
  */
 void serialOutput(char* data, char* topic) {
   Serial.flush();
@@ -78,8 +78,9 @@ int getBandGap()
    int results = ((INTERNAL_REFERENCE_VOLTAGE / ADC) + 5) / 10;
    return results;
 }
-
-void loop() {
+ 
+void loop() 
+{
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   sleep_enable();
   sleep_bod_disable(); // disable brownout detection
@@ -105,13 +106,14 @@ void loop() {
   sleep_disable();
 
   sleepCount = 0;
-  ADCSRA = prevADCSRA; // restore ADC for sensor
+  // ADCSRA = prevADCSRA; // restore ADC for sensor
 
-  // send sensor value
+  /*
+   * Do the sensor logic stuff here
+   */
   int val = sensor.readValue();
-  sendInt(val, "m");
+  sendInt(val, "w");
 
-  // send internal voltage value
   int internalVoltage = getBandGap();
   sendInt(internalVoltage, "v");
 }
