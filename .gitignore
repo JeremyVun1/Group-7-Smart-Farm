@@ -1,8 +1,5 @@
-
 *.code-workspace
-
 src/Web-Server/.vscode/
-
 src/Web-Server/config/database_credentials.php
-
 notes.txt
+__pycache__
