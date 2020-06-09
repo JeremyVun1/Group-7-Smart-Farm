@@ -155,6 +155,45 @@ foreach($readings as $r) {
     }
 }
 
+//Get voltage
+$handle = curl_init();
+$getTempsURL="http://localhost/Group-7-Smart-Farm/src/Web-Server/api/voltage/get_readings.php?".$params;
+curl_setopt($handle, CURLOPT_URL, $getTempsURL);
+curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+$result = curl_exec($handle);
+curl_close($handle);
+
+$readings = json_decode($result);
+$voltages = array(
+    array("label" => "0 - 20%", "y" => 0),
+    array("label" => "20 - 39%", "y" => 0),
+    array("label" => "40 - 59%", "y" => 0),
+    array("label" => "60 - 79%", "y" => 0),
+    array("label" => "80 - 100%", "y" => 0)
+);
+//print_r($readings);
+
+foreach($readings as $r) {
+    $v = $r->voltage;
+    switch($v) {
+        case ($v < 200):
+            $voltages[0]["y"] += 1;
+        break;
+        case ($v < 400):
+            $voltages[1]["y"] += 1;
+        break;
+        case ($v < 600):
+            $voltages[2]["y"] += 1;
+        break;
+        case ($v < 800):
+            $voltages[3]["y"] += 1;
+        break;
+        case ($v <= 1000):
+            $voltages[4]["y"] += 1;
+        break;
+    }
+}
+
 ?>
 
 <!DOCTYPE HTML>
@@ -181,8 +220,6 @@ foreach($readings as $r) {
             }] 
         });
 
-
-
         var moistureChart = new CanvasJS.Chart("soilMoistureContainer", {
             theme: "dark2",
             animationEnabled: true,
@@ -197,8 +234,6 @@ foreach($readings as $r) {
                 dataPoints: <?php echo json_encode($soilMoistures, JSON_NUMERIC_CHECK); ?>
             }] 
         });
-
-
 
         var waterChart = new CanvasJS.Chart("waterLevelContainer", {
             theme: "dark2",
@@ -215,9 +250,26 @@ foreach($readings as $r) {
             }] 
         });
 
+
+        var voltageChart = new CanvasJS.Chart("voltageContainer", {
+            theme: "dark2",
+            animationEnabled: true,
+            title:{
+                text: "Recent Battery Level Readings",
+            },
+            data: [{
+                type: "column",
+                indexLabel: "{label} : {y}",
+                showInLegend: false,
+                legendText: "{label} : {y}",
+                dataPoints: <?php echo json_encode($voltages, JSON_NUMERIC_CHECK); ?>
+            }] 
+        });
+
         tempChart.render();
         moistureChart.render();
         waterChart.render();
+        voltageChart.render();
     }
 </script>
    
@@ -229,19 +281,24 @@ foreach($readings as $r) {
             <h1>Smart Farming Control Center</h1>
         </div>
     </div>
-    <br>
     <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg-6 top-buffer">
             <div id="temperatureContainer" style="height: 300px; width: 100%; display: inline-block;"></div>
             <a href="temperature.php" id="text">Click for more</span>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-6 top-buffer">
             <div id="soilMoistureContainer" style="height: 300px; width: 100%; display: inline-block;"></div>
             <a href="soil.php" id="text">Click for more</span>        
         </div>
-        <div class="col-lg-4">
+    </div>
+    <div class="row">
+        <div class="col-lg-6 top-buffer">
             <div id="waterLevelContainer" style="height: 300px; width: 100%; display: inline-block;"></div>
             <a href="water.php" id="text">Click for more</span>
+        </div>
+        <div class="col-lg-6 top-buffer">
+            <div id="voltageContainer" style="height: 300px; width: 100%; display: inline-block;"></div>
+            <a href="voltage.php" id="text">Click for more</span>
         </div>
     </div>
 </div>
