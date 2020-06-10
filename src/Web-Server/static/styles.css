@@ -1,0 +1,20 @@
+a {
+    color:black;
+    text-decoration: none !important;
+}
+
+a:hover
+{
+    color:black;
+    text-decoration:none;
+    cursor:pointer;
+}
+
+.graph {
+    background-color: blue;
+    border: 1px solid black
+}
+
+.sensor-card-title {
+    color: black;
+}

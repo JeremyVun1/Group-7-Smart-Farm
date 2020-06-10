@@ -1,5 +1,8 @@
 <?php
 
+/*
+$baseUri = "http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/";
+
 date_default_timezone_set('Australia/Melbourne');
 $timeRange = "30 days";
 $params = array(
@@ -9,7 +12,7 @@ $params = http_build_query($params);
 
 //Get temperatures
 $handle = curl_init();
-$getTempsURL="http://localhost/Group-7-Smart-Farm/src/Web-Server/api/temperature/get_readings.php?".$params;
+$getTempsURL = $baseUri."api/temperature/get_readings.php?".$params;
 //echo $getTempsURL;
 curl_setopt($handle, CURLOPT_URL, $getTempsURL);
 curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
@@ -17,6 +20,7 @@ $result = curl_exec($handle);
 curl_close($handle);
 
 $readings = json_decode($result);
+
 $temperatures = array(
     array("label" => "-0°C", "y" => 0),
     array("label" => "0-4.99°C", "y" => 0),
@@ -78,7 +82,7 @@ foreach($readings as $r) {
 
 //Get soil moistures
 $handle = curl_init();
-$getTempsURL="http://localhost/Group-7-Smart-Farm/src/Web-Server/api/soil/get_readings.php?".$params;
+$getTempsURL = $baseUri."api/soil/get_readings.php?".$params;
 curl_setopt($handle, CURLOPT_URL, $getTempsURL);
 curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 $result = curl_exec($handle);
@@ -119,7 +123,7 @@ foreach($readings as $r) {
 
 //Get water levels
 $handle = curl_init();
-$getTempsURL="http://localhost/Group-7-Smart-Farm/src/Web-Server/api/water/get_readings.php?".$params;
+$getTempsURL = $baseUri."api/water/get_readings.php?".$params;
 curl_setopt($handle, CURLOPT_URL, $getTempsURL);
 curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 $result = curl_exec($handle);
@@ -157,7 +161,7 @@ foreach($readings as $r) {
 
 //Get voltage
 $handle = curl_init();
-$getTempsURL="http://localhost/Group-7-Smart-Farm/src/Web-Server/api/voltage/get_readings.php?".$params;
+$getTempsURL = $baseUri."api/voltage/get_readings.php?".$params;
 curl_setopt($handle, CURLOPT_URL, $getTempsURL);
 curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 $result = curl_exec($handle);
@@ -193,7 +197,7 @@ foreach($readings as $r) {
         break;
     }
 }
-
+*/
 ?>
 
 <!DOCTYPE HTML>
@@ -205,6 +209,9 @@ foreach($readings as $r) {
 <!-- libs -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 <script src="lib/canvasjs-2.3.2/canvasjs.min.js"></script>
+
+<!-- css -->
+<link rel="stylesheet" href="/static/styles.css" />
 
 <script>
     window.onload = function () {
@@ -278,33 +285,39 @@ foreach($readings as $r) {
    
 </head>
 <body>
-<div class="container-fluid">
-    <h1>test</h1>
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <h1>Smart Farming Control Center</h1>
+
+    <!-- HEADER -->
+    <nav class="navbar navbar-light bg-light">
+        <span class="navbar-brand mb-0 h1">
+        <a href="/">
+            <img src="./static/icon.png" />
+            Smart Farm Dashboard
+        </a>
+            
+        </span>
+        <span class="navbar-brand mb-0 h1">Group 7 - IoT Programming</span>
+    </nav>
+
+    <!-- CONTENT -->
+    <div class="container mx-auto p-2">
+        <?php
+            include('test_data.php');
+            include('utility.php');
+        ?>
+        <div class="row p-0 m-0">
+            <?=buildSensorTypeCard("Temperature", $testdata)?>
+            <?=buildSensorTypeCard("Moisture", $testdata)?>
+        </div>
+
+        <div class="row p-0 m-0">
+            <?=buildSensorTypeCard("Waterlevel", $testdata)?>
+            <?=buildSensorTypeCard("Voltage", $testdata)?>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-6 top-buffer">
-            <div id="temperatureContainer" style="height: 300px; width: 100%; display: inline-block;"></div>
-            <a href="temperature.php" id="text">Click for more</span>
-        </div>
-        <div class="col-lg-6 top-buffer">
-            <div id="soilMoistureContainer" style="height: 300px; width: 100%; display: inline-block;"></div>
-            <a href="soil.php" id="text">Click for more</span>        
-        </div>
+
+    <!-- FOOTER -->
+    <div class="bg-light">
+        footer
     </div>
-    <div class="row">
-        <div class="col-lg-6 top-buffer">
-            <div id="waterLevelContainer" style="height: 300px; width: 100%; display: inline-block;"></div>
-            <a href="water.php" id="text">Click for more</span>
-        </div>
-        <div class="col-lg-6 top-buffer">
-            <div id="voltageContainer" style="height: 300px; width: 100%; display: inline-block;"></div>
-            <a href="voltage.php" id="text">Click for more</span>
-        </div>
-    </div>
-</div>
 </body>
 </html>
