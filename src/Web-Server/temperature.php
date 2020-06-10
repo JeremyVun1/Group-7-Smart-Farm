@@ -144,28 +144,6 @@ if(isset($_POST['search'])) {
     array_push($lineTemperatures, $lineAgrMean);
     array_push($lineTemperatures, $lineLinReg);
 
-
-    // $mean = array_sum(array_column($lineAgrMean['dataPoints'],'y')) / count($lineAgrMean['dataPoints']);
-    // $diffFromMean = [];
-    // foreach ($lineAgrMean['dataPoints'] as $dp) {
-    //     array_push($diffFromMean,pow(($dp['y']-$mean),2));
-    // }
-    // $variance = array_sum($diffFromMean) / count($diffFromMean);
-    // $standardDev = sqrt($variance);
-
-    // //Calculate the linear regression
-    // $lineLinReg = 
-    //     [
-    //         'type' => "spline",
-    //         'showInLegend' => true,
-    //         'name' => "Linear Regression",
-    //         'dataPoints' => []
-    //     ];
-
-    //$linearReg = linear_regression();
-
-    
-
     $display = "block";
 } else {
     $display = "none";

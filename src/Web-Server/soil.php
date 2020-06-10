@@ -142,7 +142,7 @@ window.onload = function () {
             includeZero: false,
             title: "Moisture Level",
             suffix: "",
-            maximum: 1024
+            maximum: 1100
         },
         toolTip: {
             shared: "true"
