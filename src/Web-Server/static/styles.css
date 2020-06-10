@@ -18,3 +18,8 @@ a:hover
 .sensor-card-title {
     color: black;
 }
+
+.footer {
+    color: black;
+    bottom: 0;
+}

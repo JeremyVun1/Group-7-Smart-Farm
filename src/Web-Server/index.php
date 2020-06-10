@@ -60,7 +60,7 @@
         </a>
             
         </span>
-        <span class="navbar-brand mb-0 h1">Group 7 - IoT Programming</span>
+        <span class="navbar-brand mb-0 h1">Group 7 - SWE-30011 IoT Programming</span>
     </nav>
 
     <!-- CONTENT -->
@@ -81,8 +81,9 @@
     </div>
 
     <!-- FOOTER -->
-    <div class="bg-light">
-        footer
+    <div class="bg-light footer">
+        <span>Adam Knox | Jeremy Vun | Henil Patel</span>
+        <span>2020</span>
     </div>
 </body>
 </html>
