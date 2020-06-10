@@ -1,5 +1,7 @@
 <?php
 
+include 'lib/statistical_lines.php';
+
 $lineMoistures = array();
 $barMoistures = array();
 $params = array();
@@ -106,6 +108,14 @@ if(isset($_POST['search'])) {
             }
         }
     }
+
+    //Generate the statistical lines
+    $lineAgrMean = aggregate_mean_line($lineMoistures);
+    $lineLinReg = linear_regression_line($lineAgrMean);
+
+    array_push($lineMoistures, $lineAgrMean);
+    array_push($lineMoistures, $lineLinReg);
+
     $display = "block";
 } else {
     $display = "none";

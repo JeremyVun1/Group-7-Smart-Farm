@@ -1,5 +1,7 @@
 <?php
 
+include 'lib/statistical_lines.php';
+
 $lineVoltages = array();
 $barVoltages = array();
 $params = array();
@@ -106,6 +108,14 @@ if(isset($_POST['search'])) {
             }
         }
     }
+
+    //Generate the statistical lines
+    $lineAgrMean = aggregate_mean_line($lineVoltages);
+    $lineLinReg = linear_regression_line($lineAgrMean);
+
+    array_push($lineVoltages, $lineAgrMean);
+    array_push($lineVoltages, $lineLinReg);
+
     $display = "block";
 } else {
     $display = "none";

@@ -1,5 +1,7 @@
 <?php
 
+include 'lib/statistical_lines.php';
+
 $lineTemperatures = array();
 $barTemperatures = array();
 $params = array();
@@ -135,34 +137,34 @@ if(isset($_POST['search'])) {
         }
     }
 
-    //Calculate the mean average and add to graph
-    $count = count($lineTemperatures[0]['dataPoints']);
-    foreach ($lineTemperatures as $lt) {    //Find the smallest dataPoints set
-        $rangeCount = count($lt['dataPoints']);
-        if($rangeCount < $count) $count = $rangeCount;
-    }
-    $lineMean =  
-        [
-            'type' => "spline",
-            'showInLegend' => true,
-            'name' => "Mean Average",
-            'dataPoints' => []
-        ];
-    for ($i=0; $i < $count; $i++) {     //Go through each plot itteration
-        $sum = 0;
-        for ($j=0; $j < count($lineTemperatures); $j++) {   //Find the mean of this plot itteration
-            try {
-                $sum += $lineTemperatures[$j]['dataPoints'][$i]['y']; 
-            } catch(Exception $e) {}
-        }
-        $mean = $sum/count($lineTemperatures);
-        $dataPoints = [
-            'label' => "",
-            'y' => $mean
-        ]; 
-        array_push($lineMean['dataPoints'], $dataPoints);
-    }
-    array_push($lineTemperatures,$lineMean);
+    //Generate the statistical lines
+    $lineAgrMean = aggregate_mean_line($lineTemperatures);
+    $lineLinReg = linear_regression_line($lineAgrMean);
+
+    array_push($lineTemperatures, $lineAgrMean);
+    array_push($lineTemperatures, $lineLinReg);
+
+
+    // $mean = array_sum(array_column($lineAgrMean['dataPoints'],'y')) / count($lineAgrMean['dataPoints']);
+    // $diffFromMean = [];
+    // foreach ($lineAgrMean['dataPoints'] as $dp) {
+    //     array_push($diffFromMean,pow(($dp['y']-$mean),2));
+    // }
+    // $variance = array_sum($diffFromMean) / count($diffFromMean);
+    // $standardDev = sqrt($variance);
+
+    // //Calculate the linear regression
+    // $lineLinReg = 
+    //     [
+    //         'type' => "spline",
+    //         'showInLegend' => true,
+    //         'name' => "Linear Regression",
+    //         'dataPoints' => []
+    //     ];
+
+    //$linearReg = linear_regression();
+
+    
 
     $display = "block";
 } else {
