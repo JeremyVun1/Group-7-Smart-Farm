@@ -1,217 +1,177 @@
 <?php
 
-/*
- * CONFIG STUFF
- */
-$baseUri = "http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/";
-date_default_timezone_set('Australia/Melbourne');
-$timeRange = "30 days";
+    include("models.php");
 
-function create_temp_labels($temp_step_size) {
-    $result = array();
+    /*
+    * CONFIG STUFF
+    */
 
-    $i=$temp_step_size;
-    while ($i < 100) {
-        $temp_arr = array($i => strval($i-$temp_step_size).'-'.strval($i-0.01)."0°C");
-        $result = array_merge($result, $temp_arr);
-        $i += 5;
+    /*
+    function create_temp_labels($temp_step_size) {
+        $result = array();
+
+        $i=$temp_step_size;
+        while ($i < 100) {
+            $temp_arr = array($i => strval($i-$temp_step_size).'-'.strval($i-0.01)."0°C");
+            $result = array_merge($result, $temp_arr);
+            $i += 5;
+        }
+
+        return $result;
     }
 
-    return $result;
-}
-
-$temp_step_size = 5;
-$temp_labels = create_temp_labels($temp_step_size);
+    $temp_step_size = 5;
+    $temp_labels = create_temp_labels($temp_step_size);
+    */
 
 
-// build request params
-$params = array(
-    "start" => date('Y-m-d H:i:s', strtotime("-".$timeRange))
-);
-$params = http_build_query($params);
+    // produce array(DataSeries)
+    function groupBySensorId($response, $valFieldName) {
 
-// Get charting data from API
-function getData($api, $valName) {
-    $handle = curl_init();
-    $url = $baseUri.$api.$params;
+        // group data records by sensor id
+        $sensorIdGroups = [];
+        foreach ($response as $r) {
+            // create k,v if it doesn't exist
+            if (!key_exists($r->sensor_id, $sensorIdGroups)) {
+                $x = array($r->sensor_id => array());
+                $sensorIdGroups = array_merge($sensorIdGroups, $x);
+            }
 
-    //echo $url;
-    curl_setopt($handle, CURLOPT_URL, $getTempsURL);
-    curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($handle);
-    curl_close($handle);
+            array_push($sensorIdGroups[$r->sensor_id], $r);
+        }
 
-    $readings = json_decode($response);
-    foreach($readings as $r) {
-        $val = $r[$valName];
+        // produce dataseries from grouped data records
+        $result = [];
+        
+        foreach(array_keys($sensorIdGroups) as $sensorId) {
+            $records = $sensorIdGroups[$sensorId];
+            $datapoints = [];
+
+            $i = 0;
+            foreach($records as $record) {
+                $dp = new DataPoint($i, $record->$valFieldName);
+                array_push($datapoints, $dp);
+                $i += 1;
+            }
+
+            array_push($result, new DataSeries($sensorId, "line", $datapoints));
+        }
+
+        return $result;
     }
 
+    // Get charting data from API
+    function getSensorData($api, $valFieldName) {
+        // Make RESTful Request
+        $handle = curl_init();
+        curl_setopt($handle, CURLOPT_URL, $api);
+        curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($handle);
+        curl_close($handle);
 
-    return $result;
-}
+        $obj = json_decode($response);
 
-//print_r($readings);
+        // group response objects together by sensor_id
+        $result = groupBySensorId($obj, $valFieldName);
 
-foreach($readings as $r) {
-    $temp = $r->temperature;
-    switch($temp) {
-        case ($temp < 0):
-            $temperatures[0]["y"] += 1;
-        break;
-        case ($temp < 5):
-            $temperatures[1]["y"] += 1;
-        break;
-        case ($temp < 10):
-            $temperatures[2]["y"] += 1;
-        break;
-        case ($temp < 15):
-            $temperatures[3]["y"] += 1;
-        break;
-        case ($temp < 20):
-            $temperatures[4]["y"] += 1;
-        break;
-        case ($temp < 25):
-            $temperatures[5]["y"] += 1;
-        break;
-        case ($temp < 30):
-            $temperatures[6]["y"] += 1;
-        break;
-        case ($temp < 35):
-            $temperatures[7]["y"] += 1;
-        break;
-        case ($temp < 40):
-            $temperatures[8]["y"] += 1;
-        break;
-        case ($temp < 45):
-            $temperatures[9]["y"] += 1;
-        break;
-        case ($temp < 50):
-            $temperatures[10]["y"] += 1;
-        break;
-        case ($temp >= 50):
-            $temperatures[11]["y"] += 1;
-        break;
+        return $result;
     }
-}
 
+    // create a new data series as an aggregate of all the different sensors
+    function getAggregateDataSeries($dataseries) {
+        if ($dataseries == NULL)
+            return NULL;
 
-//Get soil moistures
-$handle = curl_init();
-$getTempsURL = $baseUri."api/soil/get_readings.php?".$params;
-curl_setopt($handle, CURLOPT_URL, $getTempsURL);
-curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-$result = curl_exec($handle);
-curl_close($handle);
+        $result = unserialize(serialize($dataseries[0]));
 
-$readings = json_decode($result);
-$soilMoistures = array(
-    array("label" => "0 - 20%", "y" => 0),
-    array("label" => "20 - 39%", "y" => 0),
-    array("label" => "40 - 59%", "y" => 0),
-    array("label" => "60 - 79%", "y" => 0),
-    array("label" => "80 - 100%", "y" => 0)
-);
-//print_r($readings);
+        foreach($dataseries as $ds) {
+            // roll in the data series into the result aggregate average dataseries
+            $i = 0;
+            foreach($ds->dataPoints as $dp) {
+                if ($i >= count($result->dataPoints)) {
+                    array_push($result->dataPoints, new DataPoint($i, $dp->y));
+                } else {
+                    $result->dataPoints[$i]->x = rollingAverage($result->dataPoints[$i]->x, $dp->x, $result->dataPoints[$i]->count);
+                    $result->dataPoints[$i]->y = rollingAverage($result->dataPoints[$i]->y, $dp->y, $result->dataPoints[$i]->count);
+                    $result->dataPoints[$i]->count += 1;
+                }
 
-foreach($readings as $r) {
-    $moisture = $r->moisture_level;
-    switch($moisture) {
-        case ($moisture < 500):
-            $soilMoistures[0]["y"] += 1;
-        break;
-        case ($moisture < 650):
-            $soilMoistures[1]["y"] += 1;
-        break;
-        case ($moisture < 800):
-            $soilMoistures[2]["y"] += 1;
-        break;
-        case ($moisture < 950):
-            $soilMoistures[3]["y"] += 1;
-        break;
-        case ($moisture >= 950):
-            $soilMoistures[4]["y"] += 1;
-        break;
+                $i += 1;
+            }
+        }
+
+        $result->name = "Aggregate";
+        return $result;
     }
-}
 
+    function multiplyArrays($arr1, $arr2) {
+        if (count($arr1) != count($arr2))
+            return NULL;
 
+        $result = [];
+        for($i=0; $i<count($arr1); $i++) {
+            array_push($result, $arr1[$i] * $arr2[$i]);
+        }
 
-//Get water levels
-$handle = curl_init();
-$getTempsURL = $baseUri."api/water/get_readings.php?".$params;
-curl_setopt($handle, CURLOPT_URL, $getTempsURL);
-curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-$result = curl_exec($handle);
-curl_close($handle);
-
-$readings = json_decode($result);
-$waterLevels = array(
-    array("label" => "0 - 20%", "y" => 0),
-    array("label" => "20 - 39%", "y" => 0),
-    array("label" => "40 - 59%", "y" => 0),
-    array("label" => "60 - 79%", "y" => 0),
-    array("label" => "80 - 100%", "y" => 0)
-);
-
-foreach($readings as $r) {
-    $waterLvl = $r->water_level;
-    switch($waterLvl) {
-        case ($waterLvl < 0):
-            $waterLevels[0]["y"] += 1;
-        break;
-        case ($waterLvl < 5):
-            $waterLevels[1]["y"] += 1;
-        break;
-        case ($waterLvl < 10):
-            $waterLevels[2]["y"] += 1;
-        break;
-        case ($waterLvl < 15):
-            $waterLevels[3]["y"] += 1;
-        break;
-        case ($waterLvl < 20):
-            $waterLevels[4]["y"] += 1;
-        break;
+        return array_sum($result);
     }
-}
 
-//Get voltage
-$handle = curl_init();
-$getTempsURL = $baseUri."api/voltage/get_readings.php?".$params;
-curl_setopt($handle, CURLOPT_URL, $getTempsURL);
-curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-$result = curl_exec($handle);
-curl_close($handle);
+    function linearRegression($aggregateSeries) {
+        if ($aggregateSeries == NULL)
+            return NULL;
 
-$readings = json_decode($result);
-$voltages = array(
-    array("label" => "0 - 20%", "y" => 0),
-    array("label" => "20 - 39%", "y" => 0),
-    array("label" => "40 - 59%", "y" => 0),
-    array("label" => "60 - 79%", "y" => 0),
-    array("label" => "80 - 100%", "y" => 0)
-);
-//print_r($readings);
+        $xMean = $aggregateSeries->calcXMean();
+        $yMean = $aggregateSeries->calcYMean();
+        $xVariances = $aggregateSeries->calcXVariances();
+        $yVariances = $aggregateSeries->calcYVariances();
 
-foreach($readings as $r) {
-    $v = $r->voltage;
-    switch($v) {
-        case ($v < 200):
-            $voltages[0]["y"] += 1;
-        break;
-        case ($v < 400):
-            $voltages[1]["y"] += 1;
-        break;
-        case ($v < 600):
-            $voltages[2]["y"] += 1;
-        break;
-        case ($v < 800):
-            $voltages[3]["y"] += 1;
-        break;
-        case ($v <= 1000):
-            $voltages[4]["y"] += 1;
-        break;
+        $m = multiplyArrays($xVariances, $yVariances) / multiplyArrays($xVariances, $yVariances);
+        $c = $yMean - ($m * $xMean);
+
+        $result = new LinearWeights($m, $c);
+        return $result;
     }
-}
-?>
+
+    function buildRegressionSeries($linearWeights, $length) {
+        if ($linearWeights == NULL)
+            return NULL;
+
+        $dataPoints = [];
+        for ($i=0; $i<$length; $i++) {
+            $y = $linearWeights->m*$i + $linearWeights->c;
+            array_push($dataPoints, new DataPoint($i, $y));
+        }
+
+        return new DataSeries("Regression", "line", $dataPoints);
+    }
+
+    function getData($api, $valFieldName) {
+        $baseUri = "http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/";
+        $api = $baseUri.$api;
+
+        date_default_timezone_set('Australia/Melbourne');
+        $timeRange = "30 days";
+        $params = array(
+            "start" => date('Y-m-d H:i:s', strtotime("-".$timeRange))
+        );
+        $params = http_build_query($params);
+
+        // get sensor data from api grouped by sensor id
+        $data = getSensorData($api, $valFieldName);
+        
+        // get aggregated average line of all sensors
+        $aggregateSeries = getAggregateDataSeries($data);
+
+        // do linear regression and get prediction 10 steps into the future
+        $linearWeights = linearRegression($aggregateSeries);
+        if ($linearWeights == NULL)
+            return $data;
+
+        $regressionSeries = buildRegressionSeries($linearWeights, count($aggregateSeries->dataPoints) + 10);
+
+        array_push($data, $regressionSeries);
+        array_push($data, $aggregateSeries);
+        return $data;
+    }
 
 ?>

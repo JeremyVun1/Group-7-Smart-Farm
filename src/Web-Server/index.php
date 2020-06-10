@@ -1,5 +1,11 @@
 <?php
     include("charting.php");
+
+    $tempChartData = getData("api/temperature/get_readings.php", "temperature");
+    $waterChartData = getData("api/water/get_readings.php", "water_level");
+    $voltageChartData = getData("api/voltage/get_readings.php", "voltage");
+    $moistureChartData = getData("api/soil/get_readings.php", "moisture_level");
+    
 ?>
 
 <!DOCTYPE HTML>
@@ -16,87 +22,29 @@
 <link rel="stylesheet" href="/static/styles.css" />
 
 <script>
-    var createChart = function(containerId, title, chartType="line") {
+    var createChart = function(containerId, title, data, chartType="line") {
         var result = new CanvasJS.Chart(containerId, {
             theme: "dark2",
             animationEnabled: true,
             title: {
                 text: title
             },
-            data: [{
-                type: chartType,
-                
-            }]
+            data: data
         });
+
+        return result;
     }
+
     window.onload = function () {
-        var tempChart = new CanvasJS.Chart("temperatureContainer", {
-            theme: "dark2",
-            animationEnabled: true,
-            title:{
-                text: "Recent Temperature Readings",
-            },
-            data: [{
-                type: "column",
-                indexLabel: "{label} : {y}",
-                showInLegend: false,
-                legendText: "{label} : {y}",
-                dataPoints: <?php echo json_encode($temperatures, JSON_NUMERIC_CHECK); ?>
-            }] 
-        });
-
-        /*
-        var moistureChart = new CanvasJS.Chart("soilMoistureContainer", {
-            theme: "dark2",
-            animationEnabled: true,
-            title:{
-                text: "Recent Soil Moisture Readings",
-            },
-            data: [{
-                type: "column",
-                indexLabel: "{label} : {y}",
-                showInLegend: false,
-                legendText: "{label} : {y}",
-                dataPoints: <?php echo json_encode($soilMoistures, JSON_NUMERIC_CHECK); ?>
-            }] 
-        });
-
-        var waterChart = new CanvasJS.Chart("waterLevelContainer", {
-            theme: "dark2",
-            animationEnabled: true,
-            title:{
-                text: "Recent Water Level Readings",
-            },
-            data: [{
-                type: "column",
-                indexLabel: "{label} : {y}",
-                showInLegend: false,
-                legendText: "{label} : {y}",
-                dataPoints: <?php echo json_encode($waterLevels, JSON_NUMERIC_CHECK); ?>
-            }] 
-        });
-
-
-        var voltageChart = new CanvasJS.Chart("voltageContainer", {
-            theme: "dark2",
-            animationEnabled: true,
-            title:{
-                text: "Recent Battery Level Readings",
-            },
-            data: [{
-                type: "column",
-                indexLabel: "{label} : {y}",
-                showInLegend: false,
-                legendText: "{label} : {y}",
-                dataPoints: <?php echo json_encode($voltages, JSON_NUMERIC_CHECK); ?>
-            }] 
-        });
+        var tempChart = createChart("TemperatureChartContainer", "Temperature", <?php echo json_encode($tempChartData, JSON_NUMERIC_CHECK); ?>, "line");
+        var moistureChart = createChart("MoistureChartContainer", "Moisture", <?php echo json_encode($moistureChartData, JSON_NUMERIC_CHECK); ?>, "line");
+        var waterChart = createChart("WaterLevelChartContainer", "WaterLevel", <?php echo json_encode($waterChartData, JSON_NUMERIC_CHECK); ?>, "line");
+        var voltageChart = createChart("VoltageChartContainer", "Voltage", <?php echo json_encode($voltageChartData, JSON_NUMERIC_CHECK); ?>, "line");
 
         tempChart.render();
         moistureChart.render();
         waterChart.render();
         voltageChart.render();
-        */
     }
 </script>
    
@@ -122,13 +70,13 @@
             include('utility.php');
         ?>
         <div class="row p-0 m-0">
-            <?=buildSensorTypeCard("Temperature", $temperature_data)?>
-            <?=buildSensorTypeCard("Moisture", $moisture_data)?>
+            <?=buildSensorTypeCard("Temperature", $tempChartData)?>
+            <?=buildSensorTypeCard("Moisture", $moistureChartData)?>
         </div>
 
         <div class="row p-0 m-0">
-            <?=buildSensorTypeCard("Waterlevel", $waterlevel_data)?>
-            <?=buildSensorTypeCard("Voltage", $voltage_data)?>
+            <?=buildSensorTypeCard("WaterLevel", $waterChartData)?>
+            <?=buildSensorTypeCard("Voltage", $voltageChartData)?>
         </div>
     </div>
 
