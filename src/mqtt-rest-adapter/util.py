@@ -14,5 +14,6 @@ def parse_message(msg):
     
     return topic, id, val
 
+
 def build_topic(topic):
     return f"{topic}/#"
