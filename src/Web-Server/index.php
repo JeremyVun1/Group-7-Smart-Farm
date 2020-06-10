@@ -201,8 +201,11 @@ foreach($readings as $r) {
 <head>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="stylesheet.css">
+
+<!-- libs -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 <script src="lib/canvasjs-2.3.2/canvasjs.min.js"></script>
+
 <script>
     window.onload = function () {
         var tempChart = new CanvasJS.Chart("temperatureContainer", {
@@ -276,6 +279,7 @@ foreach($readings as $r) {
 </head>
 <body>
 <div class="container-fluid">
+    <h1>test</h1>
     <div class="row">
         <div class="col-md-12 text-center">
             <h1>Smart Farming Control Center</h1>
