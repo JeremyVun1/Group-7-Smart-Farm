@@ -10,6 +10,8 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once "../../config/database.php";
 include_once "../../objects/voltage.php";
 
+include '../../lib/phpMQTTpub.php';
+
 $database = new Database();
 $conn = $database->getConnection();
 

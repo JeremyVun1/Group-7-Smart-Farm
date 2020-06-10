@@ -10,6 +10,8 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once "../../config/database.php";
 include_once "../../objects/soil.php";
 
+include '../../lib/phpMQTTpub.php';
+
 $database = new Database();
 $conn = $database->getConnection();
 
@@ -35,6 +37,9 @@ if (
         // tell the user
         echo json_encode(array("message" => "Soil moisture reading was entered"));
 
+        //trigger pump
+        trigger_pump($soil->reading);
+
     } else {    // if unable to enter the reading, tell the user
                
         // set response code - 503 service unavailable
@@ -53,5 +58,15 @@ if (
 }
 
 $conn->close();
+
+// TODO - get the trheshold from DB
+function trigger_pump($reading) {
+
+    if($reading <= 400) {   //Turn pump on
+        mqtt_publish("p",1);
+    } elseif($reading > 700) {  //Turn the pump off
+        mqtt_publish("p",0);
+    }
+}
 
 ?>

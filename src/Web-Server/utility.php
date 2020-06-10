@@ -1,11 +1,66 @@
 <?php
 
+function buildDataArray($datapoints, $count) {
+    $result = array();
+
+    foreach ($datapoints as $datapoint) {
+        array_push($result, $datapoint->y);
+    }
+
+    $result = array_slice($result, 0, $count);
+    return $result;
+}
+
+function calcCorrelation($datapoints1, $datapoints2) {
+    $count = min(count($datapoints1), count($datapoints2));
+    $arr1 = buildDataArray($datapoints1, $count);
+    $arr2 = buildDataArray($datapoints2, $count);
+
+    $result = stats_stat_correlation($arr1, $arr2);
+    if (is_nan($result))
+        $result = "";
+    else $result = number_format((float)$result, 2, '.', '');
+    return $result;
+}
+
+function calcCovariance($datapoints1, $datapoints2) {
+    $count = min(count($datapoints1), count($datapoints2));
+    $arr1 = buildDataArray($datapoints1, $count);
+    $arr2 = buildDataArray($datapoints2, $count);
+
+    $result = stats_covariance($arr1, $arr2);
+    $result = number_format((float)$result, 2, '.', '');
+    return $result;
+}
+
+function calcT($datapoints1, $datapoints2) {
+    $count = min(count($datapoints1), count($datapoints2));
+    $arr1 = buildDataArray($datapoints1, $count);
+    $arr2 = buildDataArray($datapoints2, $count);
+
+    $result = stats_stat_independent_t($arr1, $arr2);
+    $result = number_format((float)$result, 2, '.', '');
+    return $result;
+}
+
+function getDataSeriesNamed($sensor_data, $name) {
+    foreach($sensor_data as $sensor) {
+        $sensorId = $sensor->name;
+        if ($sensorId == $name)
+            return $sensor;
+    }
+    return NULL;
+}
+
 function buildSensorList($type, $sensor_data, $renderButton) {
     $result = '<table class="table table-striped table-hover table-sm">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">Sensor Id</th>
-                            <th scope="col">Last Reading</th>';
+                            <th scope="col">Id</th>
+                            <th scope="col">Last</th>
+                            <th scope="col">R^2</th>
+                            <th scope="col">Covar</th>
+                            <th scope="col">T-val</th>';
 
     if ($renderButton)
         $result = $result.'<th scope="col">View</th>';
@@ -14,6 +69,8 @@ function buildSensorList($type, $sensor_data, $renderButton) {
                     </thead>
                     <tbody>';
 
+    $aggregateDS = getAggregateDataSeries($sensor_data);
+
     foreach ($sensor_data as $sensor) {
         $sensorId = $sensor->name;
         if ($sensorId == "Aggregate" || $sensorId == "Regression")
@@ -21,8 +78,16 @@ function buildSensorList($type, $sensor_data, $renderButton) {
 
         $sensorIdStr = str_replace(" ", "_", $sensorId);
         $lastReading = end($sensor->dataPoints)->y;
+
+        $r2 = calcCorrelation($sensor->dataPoints, $aggregateDS->dataPoints);
+        $covar = calcCovariance($sensor->dataPoints, $aggregateDS->dataPoints);
+        $t = calcT($sensor->dataPoints, $aggregateDS->dataPoints);
+
         $result = $result.'<tr><td>'.$sensorId.'</td>';
         $result = $result.'<td>'.$lastReading.'</td>';
+        $result = $result.'<td>'.$r2.'</td>';
+        $result = $result.'<td>'.$covar.'</td>';
+        $result = $result.'<td>'.$t.'</td>';
 
         if ($renderButton)
             $result = $result.'<td><a href=sensor_form.php?type='.$type.'&id='.$sensorIdStr.' class="btn-sm btn-primary">View Sensor</a></td>';
@@ -101,9 +166,9 @@ function buildBarChart($data) {
 function buildStatCard($chartData) {
     foreach ($chartData as $data) {
         if ($data->name == "Aggregate") {
-            $mean = $data->calcYMean();
-            $stdDev = $data->calcYVariance();
-            $variance = $data->calcStdDev();
+            $mean = number_format((float)$data->calcYMean(), 2, '.', '');
+            $stdDev = number_format((float)$data->calcYVariance(), 2, '.', '');
+            $variance = number_format((float)$data->calcStdDev(), 2, '.', '');
 
             $result = '<div class="col m-2 border border-dark bg-light rounded shadow">
                             <table class="table table-striped table-hover table-sm mt-2">
