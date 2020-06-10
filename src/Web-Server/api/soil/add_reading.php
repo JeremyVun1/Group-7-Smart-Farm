@@ -1,5 +1,7 @@
 <?php 
 
+include '../../lib/phpMQTTpub.php';
+
 // required headers
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -35,6 +37,9 @@ if (
         // tell the user
         echo json_encode(array("message" => "Soil moisture reading was entered"));
 
+        //trigger pump
+        trigger_pump($soil->reading);
+
     } else {    // if unable to enter the reading, tell the user
                
         // set response code - 503 service unavailable
@@ -53,5 +58,14 @@ if (
 }
 
 $conn->close();
+
+function trigger_pump($reading) {
+    
+    if($reading <= 400) {   //Turn pump on
+        mqtt_publish("p",1);
+    } elseif($reading > 700) {  //Turn the pump off
+        mqtt_publish("p",0);
+    }
+}
 
 ?>
