@@ -17,7 +17,6 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, msg):
-    print("received message!")
     topic, id, val = parse_message(msg)
 
     if id:
