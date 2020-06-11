@@ -1,5 +1,6 @@
 <?php
-    include("charting.php");
+    include 'lib/charting.php';
+    include 'lib/utility.php';
 
     $params = array();
     $range = "";
@@ -123,10 +124,6 @@
 
     <!-- CONTENT -->
     <div class="container mx-auto p-2">
-        <?php
-            include('test_data.php');
-            include('utility.php');
-        ?>
         <div class="row p-0 m-0">
             <?=buildSensorTypeCard("", $chartData, false, false)?>
         </div>

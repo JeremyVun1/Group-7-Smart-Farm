@@ -1,5 +1,6 @@
 <?php
-    include("charting.php");
+    include 'lib/charting.php';
+    include 'lib/utility.php';
 
     $tempChartData = getData("api/temperature/get_readings.php", "temperature");
     $waterChartData = getData("api/water/get_readings.php", "water_level");
@@ -65,10 +66,6 @@
 
     <!-- CONTENT -->
     <div class="container mx-auto p-2">
-        <?php
-            include('test_data.php');
-            include('utility.php');
-        ?>
         <div class="row p-0 m-0">
             <?=buildSensorTypeCard("Temperature", $tempChartData)?>
             <?=buildSensorTypeCard("Moisture", $moistureChartData)?>
