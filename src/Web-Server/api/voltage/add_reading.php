@@ -10,6 +10,8 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 include_once "../../config/database.php";
 include_once "../../objects/voltage.php";
 
+include '../../lib/phpMQTTpub.php';
+
 $database = new Database();
 $conn = $database->getConnection();
 
@@ -20,7 +22,7 @@ $data = json_decode(file_get_contents('php://input'));
 if (
     //Make sure we have values!
     !empty($data->id) &&
-    !empty($data->reading)
+    (!empty($data->reading) || $data->reading == "0")
 ) {
     //add the reading
     $voltage->id = $data->id;

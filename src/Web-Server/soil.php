@@ -1,5 +1,7 @@
 <?php
 
+include 'lib/statistical_lines.php';
+
 $lineMoistures = array();
 $barMoistures = array();
 $params = array();
@@ -50,8 +52,8 @@ if(isset($_POST['search'])) {
         $moisture = $reading->moisture_level;
         $datetime = $reading->datetime;
         $dataPoints = [
-            'label' => $reading->datetime,
-            'y' => $reading->moisture_level
+            'label' => $datetime,
+            'y' => $moisture
         ];
 
         //Build the line graph data
@@ -106,6 +108,14 @@ if(isset($_POST['search'])) {
             }
         }
     }
+
+    //Generate the statistical lines
+    $lineAgrMean = aggregate_mean_line($lineMoistures);
+    $lineLinReg = linear_regression_line($lineAgrMean);
+
+    array_push($lineMoistures, $lineAgrMean);
+    array_push($lineMoistures, $lineLinReg);
+
     $display = "block";
 } else {
     $display = "none";
@@ -132,7 +142,7 @@ window.onload = function () {
             includeZero: false,
             title: "Moisture Level",
             suffix: "",
-            maximum: 1024
+            maximum: 1100
         },
         toolTip: {
             shared: "true"

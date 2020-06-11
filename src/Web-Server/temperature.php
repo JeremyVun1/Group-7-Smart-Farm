@@ -1,5 +1,7 @@
 <?php
 
+include 'lib/statistical_lines.php';
+
 $lineTemperatures = array();
 $barTemperatures = array();
 $params = array();
@@ -58,8 +60,8 @@ if(isset($_POST['search'])) {
         $temperature = $reading->temperature;
         $datetime = $reading->datetime;
         $dataPoints = [
-            'label' => $reading->datetime,
-            'y' => $reading->temperature
+            'label' => $datetime,
+            'y' => $temperature
         ];
         //Build the line graph data
         if(strpos(json_encode($lineTemperatures), $id) == 0) {   //We have a new sensor
@@ -134,6 +136,14 @@ if(isset($_POST['search'])) {
             }
         }
     }
+
+    //Generate the statistical lines
+    $lineAgrMean = aggregate_mean_line($lineTemperatures);
+    $lineLinReg = linear_regression_line($lineAgrMean);
+
+    array_push($lineTemperatures, $lineAgrMean);
+    array_push($lineTemperatures, $lineLinReg);
+
     $display = "block";
 } else {
     $display = "none";
