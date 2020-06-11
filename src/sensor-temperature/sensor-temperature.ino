@@ -4,7 +4,7 @@
 
 #include "TemperatureSensor.h"
 
-#define TEMP_PIN A0
+#define TEMP_PIN 7
 
 const int SLEEP_CYCLES = 2;
 const bool USE_SERIAL = true;
@@ -20,12 +20,6 @@ TemperatureSensor sensor(TEMP_PIN);
 
 void setup()
 {
-  // downclock to reduce power consumption
-  noInterrupts();
-  CLKPR = bit(CLKPCE);
-  CLKPR = clock_div_4;
-  interrupts();
-
   // set pins to input mode to decrease power consumption
   for (int i=2; i<13; i++) {
     pinMode(i, INPUT);
@@ -33,7 +27,7 @@ void setup()
 
   pinMode(TEMP_PIN, INPUT);
 
-  Serial.begin(9600); // actual output is 2400 baud with clock_div_4
+  Serial.begin(2400);
 }
 
 /*

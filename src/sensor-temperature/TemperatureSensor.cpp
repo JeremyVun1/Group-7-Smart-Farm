@@ -4,8 +4,7 @@
 TemperatureSensor::TemperatureSensor(int pin) : _tempPin(pin) {}
 
 int TemperatureSensor::readValue() {
-  float vol = analogRead(_tempPin);
-  float cel = vol * 500 / 1024.0;
-
-  return (int)cel;
+  int readData = DHT.read11(_tempPin);
+  float temp = DHT.temperature;
+  return (int)temp;
 }

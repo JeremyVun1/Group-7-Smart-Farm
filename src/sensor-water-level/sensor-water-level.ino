@@ -4,8 +4,8 @@
 
 #include "WaterLevelSensor.h"
 
-#define TRIG_PIN 7
-#define ECHO_PIN 6
+#define TRIG_PIN 9
+#define ECHO_PIN 10
 #define TOWER_SIZE 500 //500 cm
 
 const int SLEEP_CYCLES = 2;
@@ -106,7 +106,7 @@ void loop()
   sleep_disable();
 
   sleepCount = 0;
-  // ADCSRA = prevADCSRA; // restore ADC for sensor
+  ADCSRA = prevADCSRA; // restore ADC for sensor
 
   /*
    * Do the sensor logic stuff here

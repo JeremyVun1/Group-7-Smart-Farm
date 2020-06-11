@@ -49,6 +49,7 @@ void handleCommands() {
 };
 
 void loop() {
+  //actuator.on();
   handleCommands();
   delay(250);
 }
