@@ -2,29 +2,6 @@
 
     include 'lib/models.php';
 
-    /*
-    * CONFIG STUFF
-    */
-
-    /*
-    function create_temp_labels($temp_step_size) {
-        $result = array();
-
-        $i=$temp_step_size;
-        while ($i < 100) {
-            $temp_arr = array($i => strval($i-$temp_step_size).'-'.strval($i-0.01)."0°C");
-            $result = array_merge($result, $temp_arr);
-            $i += 5;
-        }
-
-        return $result;
-    }
-
-    $temp_step_size = 5;
-    $temp_labels = create_temp_labels($temp_step_size);
-    */
-
-
     // produce array(DataSeries)
     function groupBySensorId($response, $valFieldName) {
 

@@ -4,7 +4,9 @@
 TemperatureSensor::TemperatureSensor(int pin) : _tempPin(pin) {}
 
 int TemperatureSensor::readValue() {
+  // Activate the DHT11 to take a temperature and humidity reading
   int readData = DHT.read11(_tempPin);
-  float temp = DHT.temperature;
-  return (int)temp;
+
+  // Ask for the temperature only
+  return (int)DHT.temperature;
 }
