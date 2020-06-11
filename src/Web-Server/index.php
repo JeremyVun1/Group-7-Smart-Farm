@@ -54,13 +54,22 @@
 
     <!-- HEADER -->
     <nav class="navbar navbar-light bg-light">
-        <span class="navbar-brand mb-0 h1">
-        <a href="/">
-            <img src="./static/icon.png" />
-            Smart Farm Dashboard
-        </a>
-            
-        </span>
+        
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a href="/">
+                            <span class="navbar-brand mb-0 h1">
+                                <img src="./static/icon.png" />
+                                Smart Farm Dashboard
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="options.php">Options</a>
+                    </li>
+                </ul>
+            </div>
         <span class="navbar-brand mb-0 h1">Group 7 - SWE-30011 IoT Programming</span>
     </nav>
 
