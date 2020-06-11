@@ -16,6 +16,7 @@ $database = new Database();
 $conn = $database->getConnection();
 
 $soil = new Soil($conn);
+$config = new Config($conn);
 
 $data = json_decode(file_get_contents('php://input'));
 
@@ -61,10 +62,11 @@ $conn->close();
 
 // TODO - get the trheshold from DB
 function trigger_pump($reading) {
-
-    if($reading <= 400) {   //Turn pump on
+    $threshold = $config.getMoistureThreshold();
+    echo $threshold;
+    if($reading <= $threshold) {   //Turn pump on
         mqtt_publish("p",1);
-    } elseif($reading > 700) {  //Turn the pump off
+    } elseif($reading > $threshold) {  //Turn the pump off
         mqtt_publish("p",0);
     }
 }
