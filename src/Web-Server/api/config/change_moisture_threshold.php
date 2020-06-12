@@ -1,7 +1,5 @@
 <?php 
 
-include '../../lib/phpMQTTpub.php';
-
 // required headers
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -24,7 +22,7 @@ if (
     !empty($data->moisture_threshold)
 ) {
     //add the reading
-    if ($config.changeMoistureThreshold($data->moisture_threshold)) {
+    if ($config->changeMoistureThreshold($data->moisture_threshold)) {
         // set response code - 201 created
         http_response_code(201);
   

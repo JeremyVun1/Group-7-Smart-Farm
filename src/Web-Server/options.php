@@ -4,9 +4,19 @@
 
     $success = false;
 
-    if(isset($_POST["changeMoistureThreshold"])) {
-        if(!empty($_POST["moistureThresholdValue"]) && is_numeric($_POST["moistureThresholdValue"])) {
+    $handle = curl_init();
+    $getApi = "http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/api/config/get_moisture_threshold.php";
+    curl_setopt($handle, CURLOPT_URL, $getApi);
+    curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+    $result = curl_exec($handle);
+    curl_close($handle);
 
+    $response = json_decode($result);
+    $defaultValue = $response->moisture_threshold;
+
+    if(isset($_POST["Submit"])) {
+        if(!empty($_POST["moistureThresholdValue"]) && is_numeric($_POST["moistureThresholdValue"])) {
+            echo "post";
             // grab value from the post body
             $moistureThreshold = $_POST["moistureThresholdValue"];
 
@@ -15,16 +25,28 @@
                 $moistureThreshold = 0;
             elseif ($moistureThreshold > 1024)
                 $moistureThreshold = 1024;
+            
+            // post the new threshold
+            $postApi = "http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/api/config/change_moisture_threshold.php";
+            $handle = curl_init();
+            curl_setopt($handle, CURLOPT_URL, $postApi);
+            curl_setopt($handle, CURLOPT_POST, 1);
+            echo "a";
+            curl_setopt($handle, CURLOPT_POSTFIELDS,
+                http_build_query(array('moisture_threshold' => $moistureThreshold)));
+            curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 
-            // make connection and add to database
-            $database = new Database();
-            $conn = $database->getConnection();
-            $config = Config($conn);
-            $config->changeMoistureThreshold($moistureThreshold);
+            echo "b";
 
-            $success = true;
+            $response = curl_exec($handle);
+            echo $response;
+            curl_close($handle);
+            $success = $response == "OK";
+            echo $success;
         }
     }
+
+    //$defaultValue = $config->getMoistureThreshold();
 ?>
 
 <!-- form controls for changing the moisture threshold -->
@@ -67,20 +89,24 @@
 
     <!-- CONTENT -->
     <div class="container mx-auto p-2">
-        <div class="row">
+        <div class="row mx-auto m-3">
+            <div class="col-4 mx-auto">
             <form method="post" action="<?php echo htmlentities($_SERVER['PHP_SELF']); ?>">
                 <h3>Change the moisture threshold value:</h3>
                 <p>Determines if the water pump actuator is turned on and off when a moisture reading is received</p>
                 <div class="form-group">
-                    <label for="moistureThresholdValue">Moisture Value</label>
-                    <input type="text" class="form-control" id="moistureThresholdValue" name="moistureThresholdValue">
+                    <label for="moistureThresholdValue">Moisture Threshold Value</label>
+                    <input type="text" class="form-control" id="moistureThresholdValue" name="moistureThresholdValue" value="<?php echo $defaultValue ?>">
                 </div>
-                <input type="submit" name="changeMoistureThreshold" value="changeMoistureThreshold">
+                <input type="submit" name="Submit" value="Submit">
             </form>
+            </div>
         </div>
         <?php
             if ($success) {
-                echo "<div class='row'>Value successfully posted!</div>";
+                echo "<div class='row mx-auto'>
+                        <div class='col-4 mx-auto bg-success'>Value successfully posted!</div>
+                    </div>";
             }
         ?>
     </div>

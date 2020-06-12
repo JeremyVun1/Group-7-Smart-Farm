@@ -13,7 +13,7 @@ class Config {
         $this->conn = $conn;
     }
 
-    function changeMoistureThreshold($newValue) {
+    public function changeMoistureThreshold($newValue) {
         if ($newValue < 0)
             $newValue = 0;
         if ($newValue > 1024)
@@ -28,7 +28,7 @@ class Config {
         }
     }
 
-    function getMoistureThreshold() {
+    public function getMoistureThreshold() {
         $stmt = "SELECT moisture_threshold FROM $this->table_name WHERE config_id=1";
 
         $result = $this->conn->query($stmt);
