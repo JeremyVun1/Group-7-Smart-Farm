@@ -4,19 +4,8 @@
 
     $success = false;
 
-    $handle = curl_init();
-    $getApi = "http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/api/config/get_moisture_threshold.php";
-    curl_setopt($handle, CURLOPT_URL, $getApi);
-    curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-    $result = curl_exec($handle);
-    curl_close($handle);
-
-    $response = json_decode($result);
-    $defaultValue = $response->moisture_threshold;
-
     if(isset($_POST["Submit"])) {
         if(!empty($_POST["moistureThresholdValue"]) && is_numeric($_POST["moistureThresholdValue"])) {
-            echo "post";
             // grab value from the post body
             $moistureThreshold = $_POST["moistureThresholdValue"];
 
@@ -31,21 +20,24 @@
             $handle = curl_init();
             curl_setopt($handle, CURLOPT_URL, $postApi);
             curl_setopt($handle, CURLOPT_POST, 1);
-            curl_setopt($handle, CURLOPT_POSTFIELDS,
-                json_encode("{ \"moisture_threshold\": ".$moistureThreshold." }"));
+            curl_setopt($handle, CURLOPT_POSTFIELDS, "{ \"moisture_threshold\": ".$moistureThreshold." }");
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 
-            echo "b";
-
             $response = curl_exec($handle);
-            echo $response;
             curl_close($handle);
-            $success = $response == "OK";
-            echo $success;
+            $success = $response == "{\"message\":\"Moisture threshold was updated\"}";
         }
     }
 
-    //$defaultValue = $config->getMoistureThreshold();
+    $handle = curl_init();
+    $getApi = "http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/api/config/get_moisture_threshold.php";
+    curl_setopt($handle, CURLOPT_URL, $getApi);
+    curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+    $result = curl_exec($handle);
+    curl_close($handle);
+
+    $response = json_decode($result);
+    $defaultValue = $response->moisture_threshold;
 ?>
 
 <!-- form controls for changing the moisture threshold -->
