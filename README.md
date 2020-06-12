@@ -1,4 +1,5 @@
 # Group 7 Smart Farm
+Adam Knox, Jeremy Vun, Henil Patel
 
 ## Overview
 This repository contains all the code and documentation for an IoT smart farm implementation
