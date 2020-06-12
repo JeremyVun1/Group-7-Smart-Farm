@@ -2,10 +2,10 @@
     include 'lib/charting.php';
     include 'lib/utility.php';
 
-    $tempChartData = getData("api/temperature/get_readings.php", "temperature");
-    $waterChartData = getData("api/water/get_readings.php", "water_level");
-    $voltageChartData = getData("api/voltage/get_readings.php", "voltage");
-    $moistureChartData = getData("api/soil/get_readings.php", "moisture_level");
+    $tempChartData = getData("api/temperature/get_readings.php?", "temperature");
+    $waterChartData = getData("api/water/get_readings.php?", "water_level");
+    $voltageChartData = getData("api/voltage/get_readings.php?", "voltage");
+    $moistureChartData = getData("api/soil/get_readings.php?", "moisture_level");
     
 ?>
 
@@ -78,13 +78,21 @@
     <!-- CONTENT -->
     <div class="container mx-auto p-2">
         <div class="row p-0 m-0">
-            <?=buildSensorTypeCard("Temperature", $tempChartData)?>
-            <?=buildSensorTypeCard("Moisture", $moistureChartData)?>
+            <div class="col-lg">
+                <?=buildSensorTypeCard("Temperature", $tempChartData)?>
+            </div>
+            <div class="col-lg">
+                <?=buildSensorTypeCard("Moisture", $moistureChartData)?>
+            </div>
         </div>
 
         <div class="row p-0 m-0">
-            <?=buildSensorTypeCard("WaterLevel", $waterChartData)?>
-            <?=buildSensorTypeCard("Voltage", $voltageChartData)?>
+            <div class="col-lg">
+                <?=buildSensorTypeCard("WaterLevel", $waterChartData)?>
+            </div>
+            <div class="col-lg">
+                <?=buildSensorTypeCard("Voltage", $voltageChartData)?>
+            </div>
         </div>
     </div>
 
