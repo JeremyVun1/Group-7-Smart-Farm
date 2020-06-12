@@ -63,8 +63,16 @@ $conn->close();
 
 // TODO - get the trheshold from DB
 function trigger_pump($reading) {
-    $threshold = $config.getMoistureThreshold();
-    echo $threshold;
+    $handle = curl_init();
+    $getApi = "http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/api/config/get_moisture_threshold.php";
+    curl_setopt($handle, CURLOPT_URL, $getApi);
+    curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+    $result = curl_exec($handle);
+    curl_close($handle);
+
+    $response = json_decode($result);
+    $threshold = $response->moisture_threshold;
+
     if($reading <= $threshold) {   //Turn pump on
         mqtt_publish("p",1);
     } elseif($reading > $threshold) {  //Turn the pump off

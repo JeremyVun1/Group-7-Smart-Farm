@@ -11,7 +11,7 @@ const bool USE_SERIAL = true;
 const long INTERNAL_REFERENCE_VOLTAGE = 1125300L;
 const int LOW_VOLTAGE_VALUE = 400;
 
-const char guid[10] = "temp_a";
+const char guid[10] = "temp_b";
 
 volatile int sleepCount = 1;
 volatile char readBuffer[10];
