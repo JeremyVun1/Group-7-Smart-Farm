@@ -152,7 +152,8 @@ function buildBatteryStatusCard($sensor_data, $id, $error="false") {
         return;
 
     $lastReading = end($data->dataPoints)->y;
-    $batteryState = $lastReading < 400 ? "GOOD" : "LOW BATTERY";
+    $batteryState = $lastReading >= 400 ? "GOOD" : "LOW BATTERY";
+    $bgColor = $batteryState == "GOOD" ? "bg-success" : "bg-danger";
     $batteryState = $lastReading == 0 ? "UNKNOWN" : $batteryState;
 
     $result = '<div class="col m-2 border border-dark bg-light rounded shadow">
@@ -165,7 +166,7 @@ function buildBatteryStatusCard($sensor_data, $id, $error="false") {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>'.$batteryState.'</td>
+                            <td class='.$bgColor.'>'.$batteryState.'</td>
                             <td>'.$lastReading.'</td>
                         <tr>
                     </tbody>
@@ -187,8 +188,8 @@ function buildStatCard($chartData) {
     foreach ($chartData as $data) {
         if ($data->name == "Aggregate") {
             $mean = number_format((float)$data->calcYMean(), 2, '.', '');
-            $stdDev = number_format((float)$data->calcYVariance(), 2, '.', '');
-            $variance = number_format((float)$data->calcStdDev(), 2, '.', '');
+            $variance = number_format((float)$data->calcYVariance(), 2, '.', '');
+            $stdDev = number_format((float)$data->calcStdDev(), 2, '.', '');
 
             $result = '<div class="col m-2 border border-dark bg-light rounded shadow">
                             <table class="table table-striped table-hover table-sm mt-2">

@@ -149,8 +149,9 @@
     </div>
 
     <!-- FOOTER -->
-    <div class="bg-light">
-        footer
+    <div class="bg-light footer">
+        <span>Adam Knox | Jeremy Vun | Henil Patel</span>
+        <span>2020</span>
     </div>
 </body>
 </html>
