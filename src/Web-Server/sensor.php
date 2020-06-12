@@ -144,7 +144,7 @@
         </div>
 
         <div class="row p-0 m-0">
-            <?=buildBatteryStatusCard($voltageChartData)?>
+            <?=buildBatteryStatusCard($voltageChartData, $id)?>
         </div>
     </div>
 

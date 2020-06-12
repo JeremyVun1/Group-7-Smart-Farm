@@ -78,9 +78,6 @@ function buildSensorList($type, $sensor_data, $renderButton) {
                     <tbody>';
 
     $aggregateDS = getAggregateDataSeries($sensor_data);
-
-    print_r(count($sensor_data));
-    print_r($sensor_data);
     
 
     foreach ($sensor_data as $sensor) {
@@ -140,11 +137,21 @@ function buildSensorTypeCard($sensor_type, $sensor_data, $small=true, $renderBut
     return $result;
 }
 
-function buildBatteryStatusCard($sensor_data, $error="false") {
+function buildBatteryStatusCard($sensor_data, $id, $error="false") {
     if ($error == "true")
         return;
 
-    $lastReading = end($sensor_data->dataPoints->y);
+    $data = NULL;
+    foreach($sensor_data as $ds) {
+        if ($ds->name == $id) {
+            $data = $ds;
+        }
+    }
+
+    if ($data == NULL)
+        return;
+
+    $lastReading = end($data->dataPoints)->y;
     $batteryState = $lastReading < 400 ? "GOOD" : "LOW BATTERY";
     $batteryState = $lastReading == 0 ? "UNKNOWN" : $batteryState;
 

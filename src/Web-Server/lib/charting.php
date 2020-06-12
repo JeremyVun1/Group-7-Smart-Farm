@@ -128,9 +128,6 @@
     function getData($api, $valFieldName) {
         $baseUri = "http://ec2-54-161-186-84.compute-1.amazonaws.com/Group-7-Smart-Farm/src/Web-Server/";
         $api = $baseUri.$api;
-        echo "HELLO";
-        echo $api;
-        echo "HELLO";
 
         date_default_timezone_set('Australia/Melbourne');
         $timeRange = "30 days";
