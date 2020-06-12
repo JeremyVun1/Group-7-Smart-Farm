@@ -90,7 +90,10 @@
             array_push($result, $arr1[$i] * $arr2[$i]);
         }
 
-        return array_sum($result);
+        $resultSum = array_sum($result);
+        if ($resultSum == 0)
+            $resultSum = 1;
+        return $resultSum;
     }
 
     function linearRegression($aggregateSeries) {
