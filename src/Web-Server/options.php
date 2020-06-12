@@ -31,9 +31,8 @@
             $handle = curl_init();
             curl_setopt($handle, CURLOPT_URL, $postApi);
             curl_setopt($handle, CURLOPT_POST, 1);
-            echo "a";
             curl_setopt($handle, CURLOPT_POSTFIELDS,
-                http_build_query(array('moisture_threshold' => $moistureThreshold)));
+                json_encode("{ \"moisture_threshold\": ".$moistureThreshold." }"));
             curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 
             echo "b";

@@ -42,7 +42,7 @@ if (
     http_response_code(400);
   
     // tell the user
-    echo json_encode(array("message" => "Unable to update the omisture threshold. Data is incomplete."));
+    echo json_encode(array("message" => "Unable to update the moisture threshold. Data is incomplete."));
 }
 
 $conn->close();
