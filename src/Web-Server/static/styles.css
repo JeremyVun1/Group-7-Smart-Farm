@@ -20,6 +20,10 @@ a:hover
 }
 
 .footer {
+    position: fixed;
+    padding: 5px;
+    height: 40px;
+    width: 100%;
     color: black;
     bottom: 0;
 }

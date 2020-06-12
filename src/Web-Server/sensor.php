@@ -10,7 +10,7 @@
     if(isset($_POST['search'])) {
         $type = $_POST['type'];
         $id = $_POST['id'];
-        $id = str_replace("_", " ", $id);
+        $id = str_replace("%", " ", $id);
         $params += array("id" => $id);
 
         if(!empty($_POST['startDatetime'])) {
@@ -56,7 +56,7 @@
                 break;
         }
 
-        //$voltageChartData = getData("api/voltage/get_readings.php?".$params, "voltage");
+        $voltageChartData = getData("api/voltage/get_readings.php?".$params, "voltage");
     } else {
         $error = "true";
         // set response code - 400 bad request
@@ -102,8 +102,8 @@
         var chartData = createChart("ChartContainer", "", <?php echo json_encode($chartData, JSON_NUMERIC_CHECK); ?>, "line");
         chartData.render();
 
-        //var voltageData = createChart("VoltageChartContainer", "<?php //echo $type; ?>", <?php //echo json_encode($voltageChartData, JSON_NUMERIC_CHECK); ?>, "line");
-        //voltageData.render();
+        var voltageData = createChart("VoltageChartContainer", "<?php echo $type; ?>", <?php echo json_encode($voltageChartData, JSON_NUMERIC_CHECK); ?>, "line");
+        voltageData.render();
     }
 </script>
    

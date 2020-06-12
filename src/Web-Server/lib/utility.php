@@ -35,6 +35,14 @@ function calcCovariance($datapoints1, $datapoints2) {
 
 function calcT($datapoints1, $datapoints2) {
     $count = min(count($datapoints1), count($datapoints2));
+
+    /*
+    if (count($datapoints1) <=1)
+        print_r($datapoints1);
+    if (count($datapoints2) <=1)
+        print_r($datapoints2);
+    */
+
     $arr1 = buildDataArray($datapoints1, $count);
     $arr2 = buildDataArray($datapoints2, $count);
 
@@ -71,16 +79,21 @@ function buildSensorList($type, $sensor_data, $renderButton) {
 
     $aggregateDS = getAggregateDataSeries($sensor_data);
 
+    print_r(count($sensor_data));
+    print_r($sensor_data);
+    
+
     foreach ($sensor_data as $sensor) {
         $sensorId = $sensor->name;
         if ($sensorId == "Aggregate" || $sensorId == "Regression")
             continue;
 
-        $sensorIdStr = str_replace(" ", "_", $sensorId);
+        $sensorIdStr = str_replace(" ", "%", $sensorId);
         $lastReading = end($sensor->dataPoints)->y;
 
         $r2 = calcCorrelation($sensor->dataPoints, $aggregateDS->dataPoints);
         $covar = calcCovariance($sensor->dataPoints, $aggregateDS->dataPoints);
+        //print_r($sensor->dataPoints);
         $t = calcT($sensor->dataPoints, $aggregateDS->dataPoints);
 
         $result = $result.'<tr><td>'.$sensorId.'</td>';
